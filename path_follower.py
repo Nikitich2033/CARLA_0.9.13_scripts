@@ -83,18 +83,7 @@ for w in w1:
 # Spawn a vehicle and set it to drive to destination
 blueprint_library = world.get_blueprint_library()
 vehicle_bp = blueprint_library.filter("model3")[0]
-vehicle_actor = world.spawn_actor(vehicle_bp, carla.Transform(a+carla.Location(z=5.5)))
-
-
-actor = vehicle_actor
-actor_location = actor.get_location()
-actor_transform = actor.get_transform()
-actor_yaw = actor_transform.rotation.yaw
-spectator = world.get_spectator()
-spectator.set_transform(carla.Transform(actor_location+carla.Location(  z=  10, 
-                                                                        x= -10*math.cos(math.radians(actor_yaw)), 
-                                                                        y= -10*math.sin(math.radians(actor_yaw))),
-                                                                        carla.Rotation(pitch= -30 ,yaw=actor_yaw)))
+vehicle_actor = world.spawn_actor(vehicle_bp, carla.Transform(a+carla.Location(z=0.5)))
 
 spawn_random_pedestrians_and_cars(world,w1)
 
@@ -103,10 +92,9 @@ agent = BasicAgent(vehicle_actor)
 
 # Set the destination
 location = b 
-destination = world.get_map().get_waypoint(location).transform
+# destination = world.get_map().get_waypoint(location).transform
 
 agent.set_global_plan(w1,stop_waypoint_creation=True, clean_queue=True)
-agent.follow_speed_limits(value=False)
 
 # Follow the route
 while True:

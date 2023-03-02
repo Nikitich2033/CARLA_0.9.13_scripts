@@ -5,6 +5,7 @@ import logging
 import time
 import math
 from agents.navigation.basic_agent import BasicAgent
+from agents.navigation.global_route_planner import GlobalRoutePlanner
 import carla
 from carla import WeatherParameters
 
@@ -130,6 +131,7 @@ def main():
 
             map = world.get_map()
 
+           
             #draws waypoints for a certain road 
             def draw_waypoints(waypoints, road_id=None, life_time=50.0):
                 spawned = False 
@@ -142,9 +144,9 @@ def main():
 
             waypoints = client.get_world().get_map().generate_waypoints(distance=1.0)
             # draw_all_waypoints(waypoints)
-            draw_waypoints(waypoints, road_id=24, life_time=100)
-            draw_waypoints(waypoints, road_id=30, life_time=100)
-            draw_waypoints(waypoints, road_id=110, life_time=100)
+            # draw_waypoints(waypoints, road_id=24, life_time=100)
+            # draw_waypoints(waypoints, road_id=30, life_time=100)
+            # draw_waypoints(waypoints, road_id=110, life_time=100)
 
 
             filtered_waypoints = []
@@ -155,11 +157,45 @@ def main():
             spawn_point = filtered_waypoints[10].transform
             spawn_point.location.z += 2
 
+            filtered_waypoints = []
+            for waypoint in waypoints:
+                if(waypoint.road_id == 30):
+                    filtered_waypoints.append(waypoint)
+
+            end_point = filtered_waypoints[10].transform
+            end_point.location.z += 2
+
+             # dao = GlobalRoutePlannerDAO(amap, sampling_resolution)
+            grp = GlobalRoutePlanner(map,2)
+            # grp.setup()
+           
+            a = spawn_point.location
+            b = end_point.location
+
+            w1 = grp.trace_route(a, b) # there are other funcations can be used to generate a route in GlobalRoutePlanner.
+
+            i = 0
+            for w in w1:
+                if i % 10 == 0:
+                    world.debug.draw_string(w[0].transform.location, 'O', draw_shadow=False,
+                    color=carla.Color(r=255, g=0, b=0), life_time=120.0,
+                    persistent_lines=True)
+                else:
+                    world.debug.draw_string(w[0].transform.location, 'O', draw_shadow=False,
+                    color = carla.Color(r=0, g=0, b=255), life_time=1000.0,
+                    persistent_lines=True)
+                i += 1
+
+
+
             cybertruck = client.get_world().spawn_actor(cybertruck_bp, spawn_point)
             vehicles_list.append(cybertruck)
             vehicles_list.append(bad_car)
 
             cybertruck_agent = BasicAgent(cybertruck)
+            
+            
+            
             # Get the spectator camera
             spectator = world.get_spectator()
 
@@ -175,16 +211,14 @@ def main():
                 if(waypoint.road_id == 30):
                     target_road_waypoints.append(waypoint)
 
-            target_waypoint = target_road_waypoints[len(target_road_waypoints)-1].transform
+            # target_waypoint = target_road_waypoints[len(target_road_waypoints)-1].transform
 
-            cybertruck_agent.set_destination([target_waypoint.location.x, 
-                                target_waypoint.location.y, 
-                                target_waypoint.location.z])
+            cybertruck_agent.set_global_plan(w1,stop_waypoint_creation=True, clean_queue=True)
 
-            client.get_world().debug.draw_string(target_waypoint.location, 
-                                                    'O', draw_shadow=False,
-                                                    color=carla.Color(r=255, g=0, b=0), life_time=0,
-                                                    persistent_lines=True)
+            # client.get_world().debug.draw_string(target_waypoint.location, 
+            #                                         'O', draw_shadow=False,
+            #                                         color=carla.Color(r=255, g=0, b=0), life_time=0,
+            #                                         persistent_lines=True)
 
 
             # Spawn pedestrians if specified
@@ -306,17 +340,16 @@ def main():
                     break
 
                 cybertruck.apply_control(cybertruck_agent.run_step())
-              
-                    
 
+                 
                 # Wait for one second
                 if world.get_snapshot().timestamp.elapsed_seconds - info_time >= 1:
                     file_path = 'user_input'
                     save_vehicle_info(scenario_num, cybertruck, file_path)
                     print_vehicle_info(cybertruck)
                     info_time = world.get_snapshot().timestamp.elapsed_seconds
-                # print(time.time())
-                # world.tick()
+               
+                world.tick()
 
     
             # Wait for the user to end the script
