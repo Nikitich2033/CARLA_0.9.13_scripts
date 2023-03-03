@@ -1,5 +1,7 @@
 import carla
 import json
+import os
+import time 
 from agents.navigation.global_route_planner import GlobalRoutePlanner
 import random
 import math
@@ -178,7 +180,7 @@ for scenario_num in range(len(scenario_data)):
             if found:
                 break
 
-
+        
 
         # The 'waypoints' variable now contains a list of waypoints that define a route between 'start_pose' and 'end_pose' that goes through 'num_junctions' junctions.
 
@@ -243,6 +245,40 @@ for scenario_num in range(len(scenario_data)):
                 vehicle.apply_physics_control(vehicle_physics_control)
                 print("Changed grip Thunder")
 
+        def print_vehicle_info(vehicle):
+                print("Game time: ", world.get_snapshot().timestamp.elapsed_seconds)
+                print("Vehicle location: ", vehicle.get_location())
+                print("Vehicle velocity: ", vehicle.get_velocity())
+                print("Vehicle throttle: ", vehicle.get_control().throttle)
+
+        def save_vehicle_info(scenario_num, vehicle, folder):
+                
+               
+                file_path = f'{folder}/scenario_{scenario_num}.json'
+                
+                # Check if file exists, create it if it doesn't
+                if not os.path.exists(file_path):
+                    with open(file_path, 'w') as f:
+                        json.dump([], f)
+                
+                # Load existing data from file
+                with open(file_path, 'r') as f:
+                    data = json.load(f)
+                
+                # Add new data
+                new_data = {
+                    'game_time': world.get_snapshot().timestamp.elapsed_seconds,
+                    'vehicle_location': {'x': vehicle.get_location().x, 'y': vehicle.get_location().y, 'z': vehicle.get_location().z},
+                    'vehicle_velocity': {'x': vehicle.get_velocity().x, 'y': vehicle.get_velocity().y, 'z': vehicle.get_velocity().z},
+                    'vehicle_throttle': vehicle.get_control().throttle
+                }
+                
+                data.append(new_data)
+    
+                # Save data to file
+                with open(file_path, 'w') as f:
+                    json.dump(data, f,indent=4)
+
 
         agent = BasicAgent(vehicle_actor)
 
@@ -254,6 +290,7 @@ for scenario_num in range(len(scenario_data)):
 
         spectator = world.get_spectator()
         # Follow the route
+        info_time = world.get_snapshot().timestamp.elapsed_seconds
         while True:
             actor = vehicle_actor
             actor_location = actor.get_location()
@@ -265,6 +302,12 @@ for scenario_num in range(len(scenario_data)):
                                                                                     carla.Rotation(pitch= -30 ,yaw=actor_yaw)))
             if agent.done():
                 break
+
+            if world.get_snapshot().timestamp.elapsed_seconds - info_time >= 1:
+                    file_path = 'user_input'
+                    save_vehicle_info(scenario_num, vehicle, file_path)
+                    print_vehicle_info(vehicle)
+                    info_time = world.get_snapshot().timestamp.elapsed_seconds
             world.tick()
             control = agent.run_step()
             vehicle_actor.apply_control(control)
