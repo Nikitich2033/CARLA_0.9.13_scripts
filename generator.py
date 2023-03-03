@@ -33,7 +33,6 @@ class ScenarioGenerator:
                 "intersection": random.choice(self.intersection),
                 "pedestrians": random.choice(self.pedestrians),
                 "pedestrian_cross": random.choice(self.pedestrian_cross),
-                "num_scenarios":num_scenarios
             }
             generated_scenarios.append(scenario)
 
