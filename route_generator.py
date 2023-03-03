@@ -4,7 +4,7 @@ import random
 from agents.navigation.basic_agent import BasicAgent
 
 client = carla.Client("localhost", 2000)
-world = client.load_world('Town03')
+world = client.load_world('Town05')
 map = world.get_map()
 traffic_manager = client.get_trafficmanager(8000)
 traffic_manager.set_global_distance_to_leading_vehicle(1.0)
@@ -39,14 +39,25 @@ spawn_points = map.get_spawn_points()
 waypoints = map.generate_waypoints(2.0)
 
 
+def get_route_length(route):
+    length = 0
+    for i in range(len(route) - 1):
+        length += route[i][0].transform.location.distance(route[i + 1][0].transform.location)
+    return length
+
 for start_waypoint in waypoints:
     for end_waypoint in waypoints:
         # print(start_waypoint.transform.location.distance(end_waypoint.transform.location))
-        if start_waypoint.transform.location.distance(end_waypoint.transform.location) > 100 and start_waypoint.transform.location.distance(end_waypoint.transform.location) < 200:
-           
-            route = grp.trace_route(start_waypoint.transform.location, end_waypoint.transform.location)
+        route = grp.trace_route(start_waypoint.transform.location, end_waypoint.transform.location)
+        route_length = get_route_length(route)
+        if route_length > 200 and route_length < 300:
+            found = True
+            print(f"Distance between: {start_waypoint.transform.location.distance(end_waypoint.transform.location)}")
+            print(f"Route length: {route_length}")
             break
             # build path using the route
+    if found:
+        break
 
 
 
