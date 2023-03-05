@@ -16,7 +16,8 @@ with open("user_input/scenarios.json", "r") as file:
 
 for scenario_num in range(len(scenario_data)):
     try:
-        print("new scenario: "+ str(scenario_num))
+
+        scenario_number = scenario_data[scenario_num]["scenario_num"]
         weather = scenario_data[scenario_num]["weather"]
         intersections = scenario_data[scenario_num]["intersections"]
         vehicle = scenario_data[scenario_num]["vehicle"]
@@ -26,12 +27,18 @@ for scenario_num in range(len(scenario_data)):
         location = scenario_data[scenario_num]["location"]
         pedestrians = scenario_data[scenario_num]["pedestrians"]
         pedestrian_cross = scenario_data[scenario_num]["pedestrian_cross"]
+        start_x = scenario_data[scenario_num]["start_x"]
+        start_y = scenario_data[scenario_num]["start_y"]
+        end_x = scenario_data[scenario_num]["end_x"]
+        end_y = scenario_data[scenario_num]["end_y"]
         route_length = scenario_data[scenario_num]["route_length"]
+        total_difficulty_rating = scenario_data[scenario_num]["total_difficulty_rating"]
 
         # Print the values of the variables
 
+        print("Scenario number: ", scenario_number)
         print("Weather: ", weather)
-        print("Intersections: ", intersections)
+        print("Num of Intersections: ", intersections)
         print("Vehicle: ", vehicle)
         print("Traffic: ", traffic)
         print("Emergency: ", emergency)
@@ -40,6 +47,7 @@ for scenario_num in range(len(scenario_data)):
         print("Pedestrians: ", pedestrians)
         print("Pedestrian cross: ", pedestrian_cross)
         print("Route length: ", route_length)
+        print("Total difficulty: ",total_difficulty_rating)
 
         client = carla.Client("localhost", 2000)
 
@@ -109,25 +117,6 @@ for scenario_num in range(len(scenario_data)):
         # Set the desired number of junctions
         num_junctions = intersections
 
-        # Keep generating routes until we find one that goes through the desired number of junctions
-        while True:
-            start_pose = random.choice(spawn_points)
-            end_pose = random.choice(spawn_points)
-
-            waypoints = grp.trace_route(start_pose.location, end_pose.location)
-
-            # Count the number of junctions along the route
-            junction_count = 0
-            for waypoint in waypoints:
-                if waypoint[0].is_junction:
-                    junction_count += 1
-
-            # Check if we found a route that goes through the desired number of junctions
-            if junction_count == num_junctions:
-                break
-
-
-
         waypoints = map.generate_waypoints(2.0)
 
         def draw_waypoints(waypoints, road_id=None, life_time=50.0):
@@ -145,42 +134,25 @@ for scenario_num in range(len(scenario_data)):
                 length += route[i][0].transform.location.distance(route[i + 1][0].transform.location)
             return length
         
-        print(f"Need to find: {route_length}")
-        print(f"Need intersections: {intersections}")
-        for start_waypoint in waypoints:
-            for end_waypoint in waypoints:
-                # print(start_waypoint.transform.location.distance(end_waypoint.transform.location))
-                route = grp.trace_route(start_waypoint.transform.location, end_waypoint.transform.location)
-                found_route_length = get_route_length(route)
-              
-                # junction_count = 0
-                # for waypoint in route:
-                #     if waypoint[0].is_junction:
-                #         junction_count += 1
-
-                if found_route_length > (route_length-(route_length*0.2)) and found_route_length < (route_length+(route_length*0.2)):
-                    found = True
-                    # Get unique road IDs
-                    road_ids = list(set(waypoint[0].road_id for waypoint in route))
-                    junction_road_ids = []
-                    for road_id in road_ids:
-                        # waypoints = map.generate_waypoints(2.0)
-                        for waypoint in route:
-                            if waypoint[0].road_id == road_id and waypoint[0].is_junction:
-                                junction_road_ids.append(road_id)
-                                draw_waypoints(waypoints, road_id=road_id, life_time=300)
-
-                    junctions_on_route = len(list(set(junction_road_ids)))
-                    print(f"Num of junctions: {junctions_on_route}")
-                    print(f"Unique road IDs along the route: {road_ids}")
-                    print(f"Distance between: {start_waypoint.transform.location.distance(end_waypoint.transform.location)}")
-                    print(f"Route length: {found_route_length}")
-                    break
-                    # build path using the route
-            if found:
-                break
-
+        start_location = carla.Location(x=start_x,y=start_y)
+        end_location = carla.Location(x=end_x,y=end_y)
         
+        # print(start_waypoint.transform.location.distance(end_waypoint.transform.location))
+        route = grp.trace_route(start_location,end_location)
+      
+        
+        # Get unique road IDs
+        road_ids = list(set(waypoint[0].road_id for waypoint in route))
+        junction_road_ids = []
+        junctions_on_route = 0
+        if intersections > 0:
+            for road_id in road_ids:
+                # waypoints = map.generate_waypoints(2.0)
+                for waypoint in route:
+                    if waypoint[0].road_id == road_id and waypoint[0].is_junction:
+                        junction_road_ids.append(road_id)
+                        draw_waypoints(waypoints, road_id=road_id, life_time=300)
+                    
 
         # The 'waypoints' variable now contains a list of waypoints that define a route between 'start_pose' and 'end_pose' that goes through 'num_junctions' junctions.
 
@@ -188,7 +160,7 @@ for scenario_num in range(len(scenario_data)):
         for w in route:
             if i % 10 == 0:
                 world.debug.draw_string(w[0].transform.location, 'O', draw_shadow=False,
-                color=carla.Color(r=255, g=0, b=0), life_time=120.0,
+                color=carla.Color(r=255, g=0, b=0), life_time=1000.0,
                 persistent_lines=True)
             else:
                 world.debug.draw_string(w[0].transform.location, 'O', draw_shadow=False,
@@ -225,10 +197,10 @@ for scenario_num in range(len(scenario_data)):
             if weather == "Rain":
                 # Create Wheels Physics Control
                     
-                front_left_wheel = carla.WheelPhysicsControl(tire_friction=0.7,max_steer_angle=70)
-                front_right_wheel = carla.WheelPhysicsControl(tire_friction=0.7,max_steer_angle=70)
-                rear_left_wheel = carla.WheelPhysicsControl(tire_friction=0.7,max_steer_angle=0)
-                rear_right_wheel = carla.WheelPhysicsControl(tire_friction=0.7,max_steer_angle=0)
+                front_left_wheel = carla.WheelPhysicsControl(tire_friction=0.8,max_steer_angle=70)
+                front_right_wheel = carla.WheelPhysicsControl(tire_friction=0.8,max_steer_angle=70)
+                rear_left_wheel = carla.WheelPhysicsControl(tire_friction=0.8,max_steer_angle=0)
+                rear_right_wheel = carla.WheelPhysicsControl(tire_friction=0.8,max_steer_angle=0)
                 wheels = [front_left_wheel, front_right_wheel, rear_left_wheel, rear_right_wheel]
                 vehicle_physics_control.wheels = wheels 
                 vehicle.apply_physics_control(vehicle_physics_control)
@@ -236,10 +208,10 @@ for scenario_num in range(len(scenario_data)):
                 print("Changed grip to Rain")
 
             if weather == "Thunderstorm":
-                front_left_wheel = carla.WheelPhysicsControl(tire_friction=0.3,max_steer_angle=70)
-                front_right_wheel = carla.WheelPhysicsControl(tire_friction=0.3,max_steer_angle=70)
-                rear_left_wheel = carla.WheelPhysicsControl(tire_friction=0.3,max_steer_angle=0)
-                rear_right_wheel = carla.WheelPhysicsControl(tire_friction=0.3,max_steer_angle=0)
+                front_left_wheel = carla.WheelPhysicsControl(tire_friction=0.6,max_steer_angle=70)
+                front_right_wheel = carla.WheelPhysicsControl(tire_friction=0.6,max_steer_angle=70)
+                rear_left_wheel = carla.WheelPhysicsControl(tire_friction=0.6,max_steer_angle=0)
+                rear_right_wheel = carla.WheelPhysicsControl(tire_friction=0.6,max_steer_angle=0)
                 wheels = [front_left_wheel, front_right_wheel, rear_left_wheel, rear_right_wheel]
                 vehicle_physics_control.wheels = wheels 
                 vehicle.apply_physics_control(vehicle_physics_control)
@@ -306,7 +278,7 @@ for scenario_num in range(len(scenario_data)):
             if world.get_snapshot().timestamp.elapsed_seconds - info_time >= 1:
                     file_path = 'user_input'
                     save_vehicle_info(scenario_num, vehicle, file_path)
-                    print_vehicle_info(vehicle)
+                    # print_vehicle_info(vehicle)
                     info_time = world.get_snapshot().timestamp.elapsed_seconds
             world.tick()
             control = agent.run_step()
