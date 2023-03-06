@@ -171,11 +171,11 @@ traffic = ['Heavy', 'Light','Medium']
 emergency = ['Yes', 'No']
 timeOfDay = ['Day', 'Night','Dawn','Dusk']
 location = ['Urban', 'Country','Downtown']
-intersections = [0,1,2,3,4,5]
+intersections = [0,1,2,3,4]
 pedestrians = [True,False]
 pedestrian_cross = [True, False]
-route_length = [50,100,200,250,300,400,500,600]
-num_scenarios = 2
+route_length = [100,200,300]
+num_scenarios = 7
 
 
 scenario_generator = ScenarioGenerator(weather, vehicle, traffic, emergency, timeOfDay, location, intersections, pedestrians, pedestrian_cross,route_length, num_scenarios)

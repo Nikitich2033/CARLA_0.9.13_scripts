@@ -158,6 +158,10 @@ def main():
                     persistent_lines=True)
                 i += 1
 
+            vehicles_list = []
+            walkers_list = []
+            all_id = []
+
             def spawn_random_pedestrians_and_cars(world, route):
                 # Get the blueprint library
                 blueprint_library = world.get_blueprint_library()
@@ -168,7 +172,7 @@ def main():
 
                 # Set the number of pedestrians and cars to spawn
                 num_pedestrians = 0
-                num_cars = 20
+                num_cars = 10
 
                 # Spawn pedestrians along the route
                 for i in range(num_pedestrians):
@@ -195,8 +199,10 @@ def main():
                     transform = carla.Transform(waypoint.transform.location + carla.Location(z=0.5),waypoint.transform.rotation)
                     
                     vehicle_actor = world.try_spawn_actor(car_bp, transform)
+                    
                     if vehicle_actor:
                         # Set the vehicle to autopilot
+                        vehicles_list.append(vehicle_actor)
                         vehicle_actor.set_autopilot(True)
 
             def get_first_last_location(route):
@@ -219,9 +225,7 @@ def main():
                 vehicle_bp = blueprint_library.filter("carlacola")[0]
                  
             vehicle_actor = world.spawn_actor(vehicle_bp, carla.Transform(first_location+carla.Location(z=0.5)))
-            vehicles_list = []
-            walkers_list = []
-            all_id = []
+            
             vehicles_list.append(vehicle_actor)
 
             vehicle_ids = []
@@ -244,9 +248,9 @@ def main():
                 if traffic == "Light":
                     num_cars = 15
                 elif traffic == "Medium":
-                    num_cars = 60
+                    num_cars = 25
                 elif traffic == "Heavy":
-                    num_cars = 100
+                    num_cars = 40
                 
                 SpawnActor = carla.command.SpawnActor
                 SetAutopilot = carla.command.SetAutopilot
@@ -262,7 +266,6 @@ def main():
                     msg = 'requested %d vehicles, but could only find %d spawn points'
                     logging.warning(msg, num_cars, number_of_spawn_points)
                     num_cars = number_of_spawn_points
-
 
 
                 batch = []
@@ -298,13 +301,18 @@ def main():
                         logging.error(response.error)
                     else:
                         vehicle_ids.append(response.actor_id)
+
             if pedestrians == True:
-                percentagePedestriansRunning = 20     # how many pedestrians will run
-                percentagePedestriansCrossing = 30     # how many pedestrians will walk through the road
+                if emergency == "No":
+                    percentagePedestriansRunning = 20     # how many pedestrians will run
+                    percentagePedestriansCrossing = 30     # how many pedestrians will walk through the road
+                else:
+                    percentagePedestriansRunning = 80
+                    percentagePedestriansCrossing = 70
                 
                 # 1. take all the random locations to spawn
                 spawn_points = []
-                for i in range(100):
+                for i in range(30):
                     spawn_point = carla.Transform()
                     loc = world.get_random_location_from_navigation()
                     if (loc != None):
@@ -371,7 +379,7 @@ def main():
 
             # Example of how to use Traffic Manager parameters
             traffic_manager.global_percentage_speed_difference(30.0)
-            print('spawned %d vehicles and %d walkers, press Ctrl+C to exit.' % (len(vehicle_ids), len(walkers_list)))         
+            print('spawned %d vehicles and %d walkers, press Ctrl+C to exit.' % (len(vehicle_ids)+len(vehicles_list), len(walkers_list)))         
 
             for vehicle in vehicles_list:
 
@@ -445,21 +453,19 @@ def main():
             
             # Follow the route
             info_time = world.get_snapshot().timestamp.elapsed_seconds
-            spectator.set_transform(carla.Transform(carla.Location( z=350, 
-                                                                                        x= 0, 
-                                                                                        y= 0),
-                
-                                                                                         carla.Rotation(pitch= -90)))
+            file_path = f'user_input/scenario_{scenario_num}.json'
+            with open(file_path, 'w') as f:
+                        json.dump([], f)
             while True:
-                # actor = vehicle_actor
-                # actor_location = actor.get_location()
-                # actor_transform = actor.get_transform()
-                # actor_yaw = actor_transform.rotation.yaw
-                # spectator.set_transform(carla.Transform(actor_location+carla.Location(  z=10, 
-                #                                                                         x= - 10*math.cos(math.radians(actor_yaw)), 
-                #                                                                         y= - 10*math.sin(math.radians(actor_yaw))),
+                actor = vehicle_actor
+                actor_location = actor.get_location()
+                actor_transform = actor.get_transform()
+                actor_yaw = actor_transform.rotation.yaw
+                spectator.set_transform(carla.Transform(actor_location+carla.Location(  z=10, 
+                                                                                        x= - 10*math.cos(math.radians(actor_yaw)), 
+                                                                                        y= - 10*math.sin(math.radians(actor_yaw))),
                 
-                #                                                                          carla.Rotation(pitch= -30 ,yaw=actor_yaw)))
+                                                                                         carla.Rotation(pitch= -30 ,yaw=actor_yaw)))
                 world.tick()
 
                 if agent.done():
@@ -480,8 +486,9 @@ def main():
         finally:
 
             # Clean up the actors
-            print('\ndestroying %d vehicles' % len(vehicle_ids))
+            print('\ndestroying %d vehicles' % (len(vehicle_ids)+len(vehicles_list)))
             client.apply_batch([carla.command.DestroyActor(x) for x in vehicle_ids])
+            client.apply_batch([carla.command.DestroyActor(x) for x in vehicles_list])
             
             # stop walker controllers (list is [controller, actor, controller, actor ...])
             for i in range(0, len(all_id), 2):
