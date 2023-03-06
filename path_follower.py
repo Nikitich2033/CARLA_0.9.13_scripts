@@ -66,7 +66,7 @@ spawn_points = world.get_map().get_spawn_points()
 a = carla.Location(x=77, y=54, z=3)
 b = carla.Location(x=1.85, y=-15, z=3)
 
-w1 = grp.trace_route(a, 1000) # there are other functions can be used to generate a route in GlobalRoutePlanner.
+w1 = grp.trace_route(a, b) # there are other functions can be used to generate a route in GlobalRoutePlanner.
 
 i = 0
 for w in w1:

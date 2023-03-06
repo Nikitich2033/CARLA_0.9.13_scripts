@@ -14,7 +14,7 @@ client.set_timeout(10.0)
 # 3 big with elevation
 # 4 massive highway
 # 5 urban city with highway
-world = client.load_world('Town07')
+world = client.load_world('Town05')
 
 
 
