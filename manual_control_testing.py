@@ -132,6 +132,10 @@ try:
 except ImportError:
     raise RuntimeError('cannot import numpy, make sure numpy package is installed')
 
+import json
+from carla import WeatherParameters
+from agents.navigation.global_route_planner import GlobalRoutePlanner
+from carla import VehicleLightState as vls
 
 # ==============================================================================
 # -- Global functions ----------------------------------------------------------
@@ -156,9 +160,9 @@ def get_actor_display_name(actor, truncate=250):
 
 
 class World(object):
-    def __init__(self, carla_world, hud, args):
+    def __init__(self, carla_world,player, hud):
         self.world = carla_world
-        self.actor_role_name = args.rolename
+        self.actor_role_name = 'hero'
         try:
             self.map = self.world.get_map()
         except RuntimeError as error:
@@ -166,8 +170,9 @@ class World(object):
             print('  The server could not send the OpenDRIVE (.xodr) file:')
             print('  Make sure it exists, has the same name of your town, and is correct.')
             sys.exit(1)
+
         self.hud = hud
-        self.player = None
+        self.player = player
         self.collision_sensor = None
         self.lane_invasion_sensor = None
         self.gnss_sensor = None
@@ -176,72 +181,21 @@ class World(object):
         self.camera_manager = None
         self._weather_presets = find_weather_presets()
         self._weather_index = 0
-        self._actor_filter = args.filter
-        self._gamma = args.gamma
+        self._actor_filter = 'vehicle.*'
+        self._gamma = 2.2
         self.restart()
         self.world.on_tick(hud.on_world_tick)
         self.recording_enabled = False
         self.recording_start = 0
         self.constant_velocity_enabled = False
 
-
-
-        # Create Wheels Physics Control
-        front_left_wheel  = carla.WheelPhysicsControl(tire_friction=0.2, max_steer_angle=70.0)
-        front_right_wheel = carla.WheelPhysicsControl(tire_friction=0.2, max_steer_angle=70.0)
-        rear_left_wheel   = carla.WheelPhysicsControl(tire_friction=0.2, max_steer_angle=0.0)
-        rear_right_wheel  = carla.WheelPhysicsControl(tire_friction=0.2, max_steer_angle=0.0)
-
-        wheels = [front_left_wheel, front_right_wheel, rear_left_wheel, rear_right_wheel]
-
-        vehicle_physics_control = self.player.get_physics_control()       
-        # vehicle_physics_control.grip = 0.1
-        vehicle_physics_control.wheels = wheels 
-        self.player.apply_physics_control(vehicle_physics_control)
-        print("Changed grip to Rain")
-
     def restart(self):
-        self.player_max_speed = 1.589
-        self.player_max_speed_fast = 3.713
+        
+
         # Keep same camera config if the camera manager exists.
         cam_index = self.camera_manager.index if self.camera_manager is not None else 0
         cam_pos_index = self.camera_manager.transform_index if self.camera_manager is not None else 0
-        # Get a random blueprint.
-        blueprint = random.choice(self.world.get_blueprint_library().filter(self._actor_filter))
-        blueprint.set_attribute('role_name', self.actor_role_name)
-        if blueprint.has_attribute('color'):
-            color = random.choice(blueprint.get_attribute('color').recommended_values)
-            blueprint.set_attribute('color', color)
-        if blueprint.has_attribute('driver_id'):
-            driver_id = random.choice(blueprint.get_attribute('driver_id').recommended_values)
-            blueprint.set_attribute('driver_id', driver_id)
-        if blueprint.has_attribute('is_invincible'):
-            blueprint.set_attribute('is_invincible', 'true')
-        # set the max speed
-        if blueprint.has_attribute('speed'):
-            self.player_max_speed = float(blueprint.get_attribute('speed').recommended_values[1])
-            self.player_max_speed_fast = float(blueprint.get_attribute('speed').recommended_values[2])
-        else:
-            print("No recommended values for 'speed' attribute")
-        # Spawn the player.
-        if self.player is not None:
-            spawn_point = self.player.get_transform()
-            spawn_point.location.z += 2.0
-            spawn_point.rotation.roll = 0.0
-            spawn_point.rotation.pitch = 0.0
-            self.destroy()
-            self.player = self.world.try_spawn_actor(blueprint, spawn_point)
-           
-
-
-        while self.player is None:
-            if not self.map.get_spawn_points():
-                print('There are no spawn points available in your map/town.')
-                print('Please add some Vehicle Spawn Point to your UE4 scene.')
-                sys.exit(1)
-            spawn_points = self.map.get_spawn_points()
-            spawn_point = random.choice(spawn_points) if spawn_points else carla.Transform()
-            self.player = self.world.try_spawn_actor(blueprint, spawn_point)
+        
         # Set up the sensors.
         self.collision_sensor = CollisionSensor(self.player, self.hud)
         self.lane_invasion_sensor = LaneInvasionSensor(self.player, self.hud)
@@ -253,6 +207,8 @@ class World(object):
         actor_type = get_actor_display_name(self.player)
         self.hud.notification(actor_type)
 
+        self.world.tick()
+                            
     def next_weather(self, reverse=False):
         self._weather_index += -1 if reverse else 1
         self._weather_index %= len(self._weather_presets)
@@ -1047,41 +1003,425 @@ class CameraManager(object):
 # ==============================================================================
 
 
-def game_loop(args):
+def spawn_random_pedestrians_and_cars(world, route):
+        # Get the blueprint library
+        blueprint_library = world.get_blueprint_library()
+
+        # Get the pedestrian and car blueprints
+        pedestrian_blueprints = blueprint_library.filter("walker.pedestrian.*")
+        car_blueprints = blueprint_library.filter("vehicle.*")
+
+        # Set the number of pedestrians and cars to spawn
+        num_pedestrians = 0
+        num_cars = 10
+
+        # Spawn pedestrians along the route
+        for i in range(num_pedestrians):
+            # Choose a random waypoint along the route
+            waypoint = random.choice(route)[0]
+
+            # Choose a random pedestrian blueprint
+            pedestrian_bp = random.choice(pedestrian_blueprints)
+
+            # Spawn the pedestrian at the waypoint location
+            world.try_spawn_actor(pedestrian_bp, waypoint.transform)
+
+        # Spawn cars along the route
+        for i in range(num_cars):
+            # Choose a random waypoint along the route
+            waypoint = random.choice(route)[0]
+
+            # Choose a random car blueprint
+            car_bp = random.choice(car_blueprints)
+
+            
+
+            # Spawn the car at the waypoint location with some offset in z-axis to prevent collision with ground.
+            transform = carla.Transform(waypoint.transform.location + carla.Location(z=0.5),waypoint.transform.rotation)
+            
+            vehicle_actor = world.try_spawn_actor(car_bp, transform)
+            
+            if vehicle_actor:
+                # Set the vehicle to autopilot
+                # vehicles_list.append(vehicle_actor)
+                vehicle_actor.set_autopilot(True)
+
+def game_loop():
     pygame.init()
     pygame.font.init()
     world = None
+    with open("user_input/scenarios.json", "r") as file:
+                    scenario_data = json.load(file)
 
-    try:
-        client = carla.Client(args.host, args.port)
-        client.set_timeout(2.0)
+    for scenario_num in range(len(scenario_data)):
+        try:
+            
+            scenario_number = scenario_data[scenario_num]["scenario_num"]
+            weather = scenario_data[scenario_num]["weather"]
+            intersections = scenario_data[scenario_num]["intersections"]
+            vehicle = scenario_data[scenario_num]["vehicle"]
+            traffic = scenario_data[scenario_num]["traffic"]
+            emergency = scenario_data[scenario_num]["emergency"]
+            timeOfDay = scenario_data[scenario_num]["timeOfDay"]
+            location = scenario_data[scenario_num]["location"]
+            pedestrians = scenario_data[scenario_num]["pedestrians"]
+            pedestrian_cross = scenario_data[scenario_num]["pedestrian_cross"]
+            start_x = scenario_data[scenario_num]["start_x"]
+            start_y = scenario_data[scenario_num]["start_y"]
+            end_x = scenario_data[scenario_num]["end_x"]
+            end_y = scenario_data[scenario_num]["end_y"]
+            route_length = scenario_data[scenario_num]["route_length"]
+            total_difficulty_rating = scenario_data[scenario_num]["total_difficulty_rating"]
 
-        display = pygame.display.set_mode(
-            (args.width, args.height),
-            pygame.HWSURFACE | pygame.DOUBLEBUF)
 
-        hud = HUD(args.width, args.height)
-        world = World(client.get_world(), hud, args)
-        controller = KeyboardControl(world, args.autopilot)
+            print("Scenario number: ", scenario_number)
+            print("Weather: ", weather)
+            print("Num of Intersections: ", intersections)
+            print("Vehicle: ", vehicle)
+            print("Traffic: ", traffic)
+            print("Emergency: ", emergency)
+            print("Time: ", timeOfDay)
+            print("Location: ", location)
+            print("Pedestrians: ", pedestrians)
+            print("Pedestrian cross: ", pedestrian_cross)
+            print("Route length: ", route_length)
+            print("Total difficulty: ",total_difficulty_rating)
 
-        clock = pygame.time.Clock()
-        while True:
-            clock.tick_busy_loop(60)
-            if controller.parse_events(client, world, clock):
-                return
-            world.tick(clock)
-            world.render(display)
-            pygame.display.flip()
+            client = carla.Client("localhost", 2000)
+            traffic_manager = client.get_trafficmanager()
+            traffic_manager.set_global_distance_to_leading_vehicle(2.5)
+            traffic_manager.set_synchronous_mode(True)
+            traffic_manager.global_percentage_speed_difference(50.0)
+            
+            client.set_timeout(10.0)
 
-    finally:
+            if location == "Downtown":
+                world = client.load_world('Town05')
+            if location == "Urban":
+                world = client.load_world('Town03')
+            if location == "Country":
+                world = client.load_world('Town07')
 
-        if (world and world.recording_enabled):
-            client.stop_recorder()
 
-        if world is not None:
-            world.destroy()
+            original_settings = world.get_settings()
+            settings = world.get_settings()
+            if not settings.synchronous_mode:
+                settings.synchronous_mode = True
+                settings.fixed_delta_seconds = 0.05
+            world.apply_settings(settings)
 
-        pygame.quit()
+            traffic_manager = client.get_trafficmanager()
+            traffic_manager.set_synchronous_mode(True)
+
+            start_location = carla.Location(x=start_x,y=start_y)
+            end_location = carla.Location(x=end_x,y=end_y)
+            
+            map = world.get_map()
+            grp = GlobalRoutePlanner(map,2)
+
+            spawn_points = map.get_spawn_points()
+            route = grp.trace_route(start_location,end_location)
+
+            vehicles_list = []
+
+            # Get a random blueprint.
+            if vehicle == "Small":
+                    vehicle_bp = world.get_blueprint_library().filter("a2")[0]
+            elif vehicle == "Truck":
+                vehicle_bp = world.get_blueprint_library().filter("cybertruck")[0]
+            elif vehicle == "Van":
+                vehicle_bp = world.get_blueprint_library().filter("carlacola")[0]
+            blueprint = vehicle_bp
+            blueprint.set_attribute('role_name', 'hero')
+            if blueprint.has_attribute('color'):
+                color = random.choice(blueprint.get_attribute('color').recommended_values)
+                blueprint.set_attribute('color', color)
+            if blueprint.has_attribute('driver_id'):
+                driver_id = random.choice(blueprint.get_attribute('driver_id').recommended_values)
+                blueprint.set_attribute('driver_id', driver_id)
+            if blueprint.has_attribute('is_invincible'):
+                blueprint.set_attribute('is_invincible', 'true')
+            
+
+
+            if location == "Downtown":
+                world = client.load_world('Town05')
+            if location == "Urban":
+                world = client.load_world('Town03')
+            if location == "Country":
+                world = client.load_world('Town07')
+
+            spectator = world.get_spectator()
+            map = world.get_map()
+
+
+            cloudiness=0.0,
+            precipitation=0.0,
+            sun_altitude_angle=70.0  # 70 degrees is around noon
+
+            # Set the weather conditions
+            if weather == "Sunny":
+                cloudiness=10
+                precipitation=0.0
+                precipitation_deposits=0
+
+            elif weather == "Rain":
+                cloudiness=80
+                precipitation=60.0
+                precipitation_deposits=30
+                
+            elif weather == "Thunderstorm":
+                cloudiness=100
+                precipitation=90.0
+                precipitation_deposits=60
+                
+
+            if timeOfDay == "Day":
+                sun_altitude_angle=70.0
+            elif timeOfDay == "Night":
+                sun_altitude_angle=-30.0
+            elif timeOfDay == "Dawn":
+                sun_altitude_angle=20.0
+            elif timeOfDay == "Dusk":
+                sun_altitude_angle=110.0
+
+            weather_params = WeatherParameters(
+                cloudiness=cloudiness,
+                precipitation=precipitation,
+                sun_altitude_angle=sun_altitude_angle,  
+                precipitation_deposits=precipitation_deposits 
+            )
+
+            # Set the weather in the simulation
+            world.set_weather(weather_params)
+
+                
+            spawn_point = carla.Location(x=start_x,y=start_y)
+            spawn_point.z += 2.0
+            player = world.spawn_actor(blueprint, carla.Transform(spawn_point))
+
+
+            walkers_list = []
+            all_id = []
+            vehicle_ids = []
+
+            if traffic == "Light" or traffic == "Heavy" or traffic == "Medium": 
+                    
+                    filtered_spawn_points = []
+
+                    # Get unique road IDs
+                    road_ids = list(set(waypoint[0].road_id for waypoint in route))
+                
+                    for road_id in road_ids:
+                        # waypoints = map.generate_waypoints(2.0)
+                        for point in spawn_points:
+                            if map.get_waypoint(point.location).road_id == road_id:
+                                filtered_spawn_points.append(point)
+                        
+                    number_of_spawn_points = len(filtered_spawn_points)
+
+                    if traffic == "Light":
+                        num_cars = 15
+                    elif traffic == "Medium":
+                        num_cars = 25
+                    elif traffic == "Heavy":
+                        num_cars = 40
+                    
+                    SpawnActor = carla.command.SpawnActor
+                    SetAutopilot = carla.command.SetAutopilot
+                    SetVehicleLightState = carla.command.SetVehicleLightState
+                    FutureActor = carla.command.FutureActor
+
+                    blueprints = world.get_blueprint_library().filter('vehicle.*')
+                    blueprints = sorted(blueprints, key=lambda bp: bp.id)
+
+                    if num_cars < number_of_spawn_points:
+                        random.shuffle(filtered_spawn_points)
+                    elif num_cars > number_of_spawn_points:
+                        msg = 'requested %d vehicles, but could only find %d spawn points'
+                        logging.warning(msg, num_cars, number_of_spawn_points)
+                        num_cars = number_of_spawn_points
+
+
+                    batch = []
+                    for n, transform in enumerate(filtered_spawn_points):
+                        # print(transform)
+                        if n >= num_cars:
+                            break
+                        blueprint = random.choice(blueprints) 
+                        if blueprint.has_attribute('color'):
+                            color = random.choice(blueprint.get_attribute('color').recommended_values)
+                            blueprint.set_attribute('color', color)
+                        if blueprint.has_attribute('driver_id'):
+                            driver_id = random.choice(blueprint.get_attribute('driver_id').recommended_values)
+                            blueprint.set_attribute('driver_id', driver_id)
+
+                    
+                        blueprint.set_attribute('role_name', 'autopilot')
+
+                        # prepare the light state of the cars to spawn
+                        light_state = vls.NONE
+                        if True:
+                            light_state = vls.Position | vls.LowBeam | vls.LowBeam
+
+                        # spawn the cars and set their autopilot and light state all together
+                        batch.append(SpawnActor(blueprint, transform)
+                            .then(SetAutopilot(FutureActor, True, traffic_manager.get_port()))
+                            .then(SetVehicleLightState(FutureActor, light_state)))
+
+                    spawn_random_pedestrians_and_cars(world,route)  
+                        
+                    for response in client.apply_batch_sync(batch, True):
+                        if response.error:
+                            logging.error(response.error)
+                        else:
+                            vehicle_ids.append(response.actor_id)
+            if pedestrians == True:
+                if emergency == "No":
+                    percentagePedestriansRunning = 20     # how many pedestrians will run
+                    percentagePedestriansCrossing = 30     # how many pedestrians will walk through the road
+                else:
+                    percentagePedestriansRunning = 80
+                    percentagePedestriansCrossing = 70
+                
+                # 1. take all the random locations to spawn
+                spawn_points = []
+                for i in range(30):
+                    spawn_point = carla.Transform()
+                    loc = world.get_random_location_from_navigation()
+                    if (loc != None):
+                        spawn_point.location = loc
+                        spawn_points.append(spawn_point)
+                # 2. we spawn the walker object
+                batch = []
+                walker_speed = []
+                for spawn_point in spawn_points:
+                    walker_bp = random.choice(world.get_blueprint_library().filter("walker.pedestrian.*"))
+                    # set as not invincible
+                    if walker_bp.has_attribute('is_invincible'):
+                        walker_bp.set_attribute('is_invincible', 'false')
+                    # set the max speed
+                    if walker_bp.has_attribute('speed'):
+                        if (random.random() > percentagePedestriansRunning):
+                            # walking
+                            walker_speed.append(walker_bp.get_attribute('speed').recommended_values[1])
+                        else:
+                            # running
+                            walker_speed.append(walker_bp.get_attribute('speed').recommended_values[2])
+                    else:
+                        print("Walker has no speed")
+                        walker_speed.append(0.0)
+                    batch.append(SpawnActor(walker_bp, spawn_point))
+                results = client.apply_batch_sync(batch, True)
+                walker_speed2 = []
+                for i in range(len(results)):
+                    if results[i].error:
+                        logging.error(results[i].error)
+                    else:
+                        walkers_list.append({"id": results[i].actor_id})
+                        walker_speed2.append(walker_speed[i])
+                walker_speed = walker_speed2
+                # 3. we spawn the walker controller
+                batch = []
+                walker_controller_bp = world.get_blueprint_library().find('controller.ai.walker')
+                for i in range(len(walkers_list)):
+                    batch.append(SpawnActor(walker_controller_bp, carla.Transform(), walkers_list[i]["id"]))
+                results = client.apply_batch_sync(batch, True)
+                for i in range(len(results)):
+                    if results[i].error:
+                        logging.error(results[i].error)
+                    else:
+                        walkers_list[i]["con"] = results[i].actor_id
+                # 4. we put together the walkers and controllers id to get the objects from their id
+                for i in range(len(walkers_list)):
+                    all_id.append(walkers_list[i]["con"])
+                    all_id.append(walkers_list[i]["id"])
+                all_actors = world.get_actors(all_id)
+
+                # 5. initialize each controller and set target to walk to (list is [controller, actor, controller, actor ...])
+                # set how many pedestrians can cross the road
+                world.set_pedestrians_cross_factor(percentagePedestriansCrossing)
+                for i in range(0, len(all_id), 2):
+                    # start walker
+                    all_actors[i].start()
+                    # set walk to random point
+                    all_actors[i].go_to_location(world.get_random_location_from_navigation())
+                    # max speed
+                    all_actors[i].set_max_speed(float(walker_speed[int(i/2)]))
+
+            
+                print('spawned %d vehicles and %d walkers, press Ctrl+C to exit.' % (len(vehicle_ids)+len(vehicles_list), len(walkers_list)))
+
+                def print_vehicle_info(vehicle):
+                        print("Game time: ", world.get_snapshot().timestamp.elapsed_seconds)
+                        print("Vehicle location: ", vehicle.get_location())
+                        print("Vehicle velocity: ", vehicle.get_velocity())
+                        print("Vehicle throttle: ", vehicle.get_control().throttle)
+
+                def save_vehicle_info(scenario_num, vehicle, folder):
+                        
+                    
+                        file_path = f'{folder}/scenario_{scenario_num}.json'
+                        
+                        # Check if file exists, create it if it doesn't
+                        if not os.path.exists(file_path):
+                            with open(file_path, 'w') as f:
+                                json.dump([], f)
+                        
+                        # Load existing data from file
+                        with open(file_path, 'r') as f:
+                            data = json.load(f)
+                        
+                        # Add new data
+                        new_data = {
+                            'game_time': world.get_snapshot().timestamp.elapsed_seconds,
+                            'vehicle_location': {'x': vehicle.get_location().x, 'y': vehicle.get_location().y, 'z': vehicle.get_location().z},
+                            'vehicle_velocity': {'x': vehicle.get_velocity().x, 'y': vehicle.get_velocity().y, 'z': vehicle.get_velocity().z},
+                            'vehicle_throttle': vehicle.get_control().throttle
+                        }
+                        
+                        data.append(new_data)
+            
+                        # Save data to file
+                        with open(file_path, 'w') as f:
+                            json.dump(data, f,indent=4)
+           
+          
+               
+
+            display = pygame.display.set_mode(
+                (1280,720),
+                pygame.HWSURFACE | pygame.DOUBLEBUF)
+
+            hud = HUD(1280,720)
+            base_world = world
+            world = World(world,player, hud)
+            controller = KeyboardControl(world, False)
+
+                 
+            # Follow the route
+            info_time = base_world.get_snapshot().timestamp.elapsed_seconds
+            file_path = f'user_input/scenario_{scenario_num}.json'
+            with open(file_path, 'w') as f:
+                        json.dump([], f)
+
+            clock = pygame.time.Clock()
+            while True:
+                base_world.tick()
+                clock.tick_busy_loop(60)
+                
+                if controller.parse_events(client, world, clock):
+                    return
+                world.tick(clock)
+                world.render(display)
+                pygame.display.flip()
+
+        finally:
+
+            if world is not None:
+                world.destroy()
+
+            pygame.quit()
 
 
 # ==============================================================================
@@ -1090,62 +1430,11 @@ def game_loop(args):
 
 
 def main():
-    argparser = argparse.ArgumentParser(
-        description='CARLA Manual Control Client')
-    argparser.add_argument(
-        '-v', '--verbose',
-        action='store_true',
-        dest='debug',
-        help='print debug information')
-    argparser.add_argument(
-        '--host',
-        metavar='H',
-        default='127.0.0.1',
-        help='IP of the host server (default: 127.0.0.1)')
-    argparser.add_argument(
-        '-p', '--port',
-        metavar='P',
-        default=2000,
-        type=int,
-        help='TCP port to listen to (default: 2000)')
-    argparser.add_argument(
-        '-a', '--autopilot',
-        action='store_true',
-        help='enable autopilot')
-    argparser.add_argument(
-        '--res',
-        metavar='WIDTHxHEIGHT',
-        default='1280x720',
-        help='window resolution (default: 1280x720)')
-    argparser.add_argument(
-        '--filter',
-        metavar='PATTERN',
-        default='vehicle.*',
-        help='actor filter (default: "vehicle.*")')
-    argparser.add_argument(
-        '--rolename',
-        metavar='NAME',
-        default='hero',
-        help='actor role name (default: "hero")')
-    argparser.add_argument(
-        '--gamma',
-        default=2.2,
-        type=float,
-        help='Gamma correction of the camera (default: 2.2)')
-    args = argparser.parse_args()
-
-    args.width, args.height = [int(x) for x in args.res.split('x')]
-
-    log_level = logging.DEBUG if args.debug else logging.INFO
-    logging.basicConfig(format='%(levelname)s: %(message)s', level=log_level)
-
-    logging.info('listening to server %s:%s', args.host, args.port)
-
-    print(__doc__)
+   
 
     try:
 
-        game_loop(args)
+        game_loop()
 
     except KeyboardInterrupt:
         print('\nCancelled by user. Bye!')

@@ -2,7 +2,7 @@ import json
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Dense
-from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder
 
 # Load the data from the JSON file
 with open('user_input/scenarios.json') as f:
@@ -24,14 +24,7 @@ for example in data:
     ])
     y.append(example['total_difficulty_rating'])
 
-# Load the data from the JSON file
-with open('user_input/scenarios.json') as f:
-    data = json.load(f)
-
-
 # One-hot encode the features
-from sklearn.preprocessing import OneHotEncoder
-
 # Create a list of indices corresponding to the categorical columns in X
 cat_cols = [0, 1, 2, 3, 4, 5]
 
@@ -44,15 +37,9 @@ encoder.fit(X)
 # Transform X using the encoder
 X_encoded = encoder.transform(X)
 
-# Print the shape of the encoded X
-print(X_encoded.shape)
-
 # Convert the data to NumPy arrays
 X = X_encoded 
 y = np.array(y)
-
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Define the neural network model
 model = Sequential()
@@ -65,14 +52,33 @@ model.add(Dense(2, activation='linear'))
 model.compile(loss='mean_squared_error', optimizer='adam')
 
 # Train the model
-model.fit(X_train, y_train, epochs=100, batch_size=32, validation_data=(X_test, y_test))
+model.fit(X, y, epochs=100, batch_size=32)
 
-# Evaluate the model
-loss = model.evaluate(X_test, y_test)
-print('Test loss:', loss)
+# Define a function to generate a new scenario object based on the predicted difficulty rating
+def generate_scenario(model, encoder, weather, vehicle, traffic, timeOfDay, location, intersections, route_length):
+    # Create a new scenario object with the given features
+    scenario = {
+        'weather': weather,
+        'vehicle': vehicle,
+        'traffic': traffic,
+        'timeOfDay': timeOfDay,
+        'location': location,
+        'intersections': intersections,
+        'route_length': route_length
+    }
 
-# Make predictions with the model
-predictions = model.predict(X_test)
-# predictions = np.nan_to_num(predictions, nan=0)
+    # One-hot encode the features
+    features = [[weather, vehicle, traffic, timeOfDay, location, intersections, route_length]]
+    features_encoded = encoder.transform(features)
 
+    # Predict the difficulty rating using the model
+    predicted_rating = model.predict(features_encoded)[0][0]
 
+    # Add the predicted difficulty rating to the scenario object
+    scenario['total_difficulty_rating'] = predicted_rating
+
+    return scenario
+
+# Generate a new scenario object with some example features
+new_scenario = generate_scenario(model, encoder, 'Sunny', 'Small', 'Medium', 'Night', 'Urban', 3, 300)
+print(new_scenario)

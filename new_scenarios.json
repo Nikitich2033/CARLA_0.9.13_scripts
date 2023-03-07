@@ -1,16 +1,17 @@
 [
     {
-        "weather": "Rain",
-        "road": "City",
-        "vehicle": "Car",
-        "traffic": "Heavy",
-        "emergency": "No",
-        "timeOfDay": "Day",
-        "location": "Urban",
-        "num_cars": 2,
-        "intersection": true,
+        "weather": "Sunny",
+        "road": "Highway",
+        "vehicle": "Bus",
+        "traffic": "Light",
+        "emergency": "Yes",
+        "timeOfDay": "Night",
+        "location": "Rural",
+        "num_cars": 69,
+        "num_pedestrians": 13,
+        "intersection": false,
         "pedestrians": false,
-        "pedestrian_cross": true
+        "pedestrian_cross": false
     },
     {
         "weather": "Rain",
@@ -20,9 +21,38 @@
         "emergency": "No",
         "timeOfDay": "Day",
         "location": "Urban",
-        "num_cars": 5,
+        "num_cars": 79,
+        "num_pedestrians": 15,
         "intersection": true,
+        "pedestrians": true,
+        "pedestrian_cross": true
+    },
+    {
+        "weather": "Sunny",
+        "road": "Highway",
+        "vehicle": "Bus",
+        "traffic": "Light",
+        "emergency": "Yes",
+        "timeOfDay": "Night",
+        "location": "Rural",
+        "num_cars": 67,
+        "num_pedestrians": 10,
+        "intersection": false,
         "pedestrians": false,
+        "pedestrian_cross": false
+    },
+    {
+        "weather": "Rain",
+        "road": "City",
+        "vehicle": "Car",
+        "traffic": "Heavy",
+        "emergency": "No",
+        "timeOfDay": "Day",
+        "location": "Urban",
+        "num_cars": 92,
+        "num_pedestrians": 16,
+        "intersection": true,
+        "pedestrians": true,
         "pedestrian_cross": true
     }
 ]
