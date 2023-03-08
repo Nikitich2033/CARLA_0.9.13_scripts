@@ -457,7 +457,7 @@ def main():
             collision_sensor.listen(on_collision)
 
             
-
+            invasions = []
             # Get the blueprint for the lane invasion sensor
             lane_invasion_bp = world.get_blueprint_library().find('sensor.other.lane_invasion')
 

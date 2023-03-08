@@ -525,6 +525,9 @@ def main():
             # Set up a callback function for when the camera receives an image
             camera.listen(lambda image: display.blit(process_image(image), (0, 0)))
             
+
+            sensors = []
+
             collision_bp = world.get_blueprint_library().find('sensor.other.collision')
             collision_transform = carla.Transform(carla.Location(x=1.5, z=2.4))
             collision_sensor = world.spawn_actor(collision_bp, collision_transform, attach_to=vehicle_actor)
@@ -553,11 +556,15 @@ def main():
 
             lane_invasion_sensor.listen(on_lane_invasion)
 
+            sensors.append(collision_sensor)
+            sensors.append(lane_invasion_sensor)
+
             info_time = world.get_snapshot().timestamp.elapsed_seconds
             file_path = f'user_input/manual_scenario_{scenario_num}.json'
             with open(file_path, 'w') as f:
                         json.dump([], f)
 
+            key_press_times = {}
             while True:
 
                 actor = vehicle_actor
@@ -575,19 +582,21 @@ def main():
                     if event.type == pygame.QUIT:
                         return
 
+                # Set vehicle control based on keys pressed
                 # Get pressed keys
                 keys = pygame.key.get_pressed()
 
-                # Set vehicle control based on keys pressed
                 control = carla.VehicleControl()
                 if keys[pygame.K_UP]:
-                    control.throttle = 1.0
+                    control.throttle = 0.65
                 if keys[pygame.K_DOWN]:
-                    control.brake = 1.0
+                    control.reverse = True
                 if keys[pygame.K_LEFT]:
-                    control.steer = -1.0
+                    control.steer = -0.5
                 if keys[pygame.K_RIGHT]:
-                    control.steer = 1.0
+                    control.steer = 0.5
+                if keys[pygame.K_SPACE]:
+                    control.brake = 0.75
 
                 # Apply vehicle control to the vehicle object
                 vehicle_actor.apply_control(control)
@@ -603,7 +612,7 @@ def main():
                         # print_vehicle_info(vehicle)
                         info_time = world.get_snapshot().timestamp.elapsed_seconds
 
-                clock.tick(60)
+                clock.tick(30)
                 pygame.display.flip()
 
                 
@@ -618,6 +627,9 @@ def main():
             # stop walker controllers (list is [controller, actor, controller, actor ...])
             for i in range(0, len(all_id), 2):
                 all_actors[i].stop()
+            
+            for i in range(len(sensors)-1):
+                sensors[i].destroy()
 
             print('\ndestroying %d walkers' % len(walkers_list))
             client.apply_batch([carla.command.DestroyActor(x) for x in all_id])
