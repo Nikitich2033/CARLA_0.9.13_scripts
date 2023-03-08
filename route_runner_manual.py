@@ -46,21 +46,16 @@ try:
     import numpy as np
 except ImportError:
     raise RuntimeError('cannot import numpy, make sure numpy package is installed')
-
-from carla import ColorConverter as cc
-
+import carla
 import logging
 import math
 import random
-
-import carla
 import json
 import os
 import time 
 from agents.navigation.global_route_planner import GlobalRoutePlanner
 import random
 import math
-from agents.navigation.basic_agent import BasicAgent
 from carla import WeatherParameters
 import logging
 from carla import VehicleLightState as vls
@@ -557,7 +552,7 @@ def main():
                     print(f"Crossed: {marking.type}")
 
             lane_invasion_sensor.listen(on_lane_invasion)
-            
+
             info_time = world.get_snapshot().timestamp.elapsed_seconds
             file_path = f'user_input/manual_scenario_{scenario_num}.json'
             with open(file_path, 'w') as f:

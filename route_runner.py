@@ -444,6 +444,8 @@ def main():
             agent.set_global_plan(route,stop_waypoint_creation=True, clean_queue=True)
             
 
+            sensors = []
+
             collision_bp = world.get_blueprint_library().find('sensor.other.collision')
             collision_transform = carla.Transform(carla.Location(x=1.5, z=2.4))
             collision_sensor = world.spawn_actor(collision_bp, collision_transform, attach_to=vehicle_actor)
@@ -454,6 +456,7 @@ def main():
 
             collision_sensor.listen(on_collision)
 
+            
 
             # Get the blueprint for the lane invasion sensor
             lane_invasion_bp = world.get_blueprint_library().find('sensor.other.lane_invasion')
@@ -472,6 +475,9 @@ def main():
 
             lane_invasion_sensor.listen(on_lane_invasion)
             
+            sensors.append(collision_sensor)
+            sensors.append(lane_invasion_sensor)
+
             # Follow the route
             info_time = world.get_snapshot().timestamp.elapsed_seconds
             file_path = f'user_input/auto_scenario_{scenario_num}.json'
@@ -496,6 +502,14 @@ def main():
                 world.tick()
 
                 if agent.done():
+                    index = scenario_num  # The index of the element to update
+                    scenario_data[index]['score1'] = 10  # Add score1 with value 10
+                    scenario_data[index]['score2'] = 20  # Add score2 with value 20
+
+                    # Open the JSON file for writing
+                    with open("user_input/scenarios.json", "w") as file:
+                        # Write the updated data back to the file
+                        json.dump(scenario_data, file,indent=4)
                     break
 
                 if world.get_snapshot().timestamp.elapsed_seconds - info_time >= 1:
@@ -520,6 +534,9 @@ def main():
             # stop walker controllers (list is [controller, actor, controller, actor ...])
             for i in range(0, len(all_id), 2):
                 all_actors[i].stop()
+
+            for i in range(len(sensors)-1):
+                sensors[i].destroy()
 
             print('\ndestroying %d walkers' % len(walkers_list))
             client.apply_batch([carla.command.DestroyActor(x) for x in all_id])
