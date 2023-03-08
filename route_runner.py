@@ -410,10 +410,7 @@ def main():
                     print("Vehicle velocity: ", vehicle.get_velocity())
                     print("Vehicle throttle: ", vehicle.get_control().throttle)
 
-            def save_vehicle_info(scenario_num, vehicle, folder):
-                    
-                
-                    file_path = f'{folder}/scenario_{scenario_num}.json'
+            def save_vehicle_info(vehicle, file_path):
                     
                     # Check if file exists, create it if it doesn't
                     if not os.path.exists(file_path):
@@ -445,11 +442,40 @@ def main():
             # destination = world.get_map().get_waypoint(location).transform
 
             agent.set_global_plan(route,stop_waypoint_creation=True, clean_queue=True)
+            
 
+            collision_bp = world.get_blueprint_library().find('sensor.other.collision')
+            collision_transform = carla.Transform(carla.Location(x=1.5, z=2.4))
+            collision_sensor = world.spawn_actor(collision_bp, collision_transform, attach_to=vehicle_actor)
+
+            def on_collision(event):
+                # Do something when a collision occurs
+                print("Collision detected:", event)
+
+            collision_sensor.listen(on_collision)
+
+
+            # Get the blueprint for the lane invasion sensor
+            lane_invasion_bp = world.get_blueprint_library().find('sensor.other.lane_invasion')
+
+            # Create a transform object to specify the location and rotation of the sensor relative to the vehicle
+            lane_invasion_transform = carla.Transform()
+
+            # Spawn the lane invasion sensor actor and attach it to the vehicle
+            lane_invasion_sensor = world.spawn_actor(lane_invasion_bp, lane_invasion_transform, attach_to=vehicle_actor)
+
+            # Set up a callback function to handle lane invasion events
+            def on_lane_invasion(event):
+                # Do something when a lane invasion occurs
+                for marking in event.crossed_lane_markings:
+                    print(f"Crossed: {marking.type}")
+
+            lane_invasion_sensor.listen(on_lane_invasion)
             
             # Follow the route
             info_time = world.get_snapshot().timestamp.elapsed_seconds
-            file_path = f'user_input/scenario_{scenario_num}.json'
+            file_path = f'user_input/auto_scenario_{scenario_num}.json'
+
             with open(file_path, 'w') as f:
                         json.dump([], f)
 
@@ -473,8 +499,8 @@ def main():
                     break
 
                 if world.get_snapshot().timestamp.elapsed_seconds - info_time >= 1:
-                        file_path = 'user_input'
-                        save_vehicle_info(scenario_num, vehicle, file_path)
+                       
+                        save_vehicle_info(vehicle_actor, file_path)
                         # print_vehicle_info(vehicle)
                         info_time = world.get_snapshot().timestamp.elapsed_seconds
 
