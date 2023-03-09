@@ -453,6 +453,11 @@ def main():
             def on_collision(event):
                 # Do something when a collision occurs
                 print("Collision detected:", event)
+                other_actor = event.other_actor
+                print("Collision detected with actor ID:", other_actor.type_id)
+                if 'static' in other_actor.type_id:
+                    print("Collision detected with a static object")
+                    other_actor.destroy()
 
             collision_sensor.listen(on_collision)
 
@@ -478,16 +483,17 @@ def main():
             sensors.append(collision_sensor)
             sensors.append(lane_invasion_sensor)
 
-            # Follow the route
-            info_time = world.get_snapshot().timestamp.elapsed_seconds
+           
             file_path = f'user_input/auto_scenario_{scenario_num}.json'
 
             with open(file_path, 'w') as f:
                         json.dump([], f)
 
 
-        
-            while True:
+            # Follow the route for 3 minutes
+            t_end = time.time() + 180
+            info_time = world.get_snapshot().timestamp.elapsed_seconds
+            while time.time() < t_end:
 
                 
                 actor = vehicle_actor
