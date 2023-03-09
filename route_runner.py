@@ -502,14 +502,6 @@ def main():
                 world.tick()
 
                 if agent.done():
-                    index = scenario_num  # The index of the element to update
-                    scenario_data[index]['score1'] = 10  # Add score1 with value 10
-                    scenario_data[index]['score2'] = 20  # Add score2 with value 20
-
-                    # Open the JSON file for writing
-                    with open("user_input/scenarios.json", "w") as file:
-                        # Write the updated data back to the file
-                        json.dump(scenario_data, file,indent=4)
                     break
 
                 if world.get_snapshot().timestamp.elapsed_seconds - info_time >= 1:
