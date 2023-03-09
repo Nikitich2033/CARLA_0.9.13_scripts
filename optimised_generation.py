@@ -152,12 +152,21 @@ class ScenarioGenerator:
 
                         print(scenario)
 
+                        # Create a list of dictionaries representing each location in the route
+                        locations = []
+                        for waypoint, _ in route:
+                            location = waypoint.transform.location
+                            locations.append({'X': location.x, 'Y': location.y})
+
+                        # Save the locations to a JSON file
+                        with open(f'user_input/route_{i}.json', 'w') as f:
+                            json.dump(locations, f,indent=4)
+
                         generated_scenarios.append(scenario)
                         break
                         # build path using the route
                 if found:
                     break
-
 
         # print(len(generated_scenarios))
         with open('user_input/scenarios.json', 'w') as f:
@@ -175,7 +184,7 @@ intersections = [0,1,2,3,4]
 pedestrians = [True,False]
 pedestrian_cross = [True, False]
 route_length = [100,200,300]
-num_scenarios = 1
+num_scenarios = 20
 
 
 scenario_generator = ScenarioGenerator(weather, vehicle, traffic, emergency, timeOfDay, location, intersections, pedestrians, pedestrian_cross,route_length, num_scenarios)
