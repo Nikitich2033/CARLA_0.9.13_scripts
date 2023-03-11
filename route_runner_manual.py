@@ -492,9 +492,6 @@ def main():
                         json.dump(data, f,indent=4)
 
 
-          
-
-             
             pygame.init()
             display = pygame.display.set_mode((1280, 720)) 
             # Set up the clock for a decent framerate
@@ -589,14 +586,15 @@ def main():
                 control = carla.VehicleControl()
                 if keys[pygame.K_UP]:
                     control.throttle = 0.65
-                if keys[pygame.K_DOWN]:
-                    control.reverse = True
                 if keys[pygame.K_LEFT]:
                     control.steer = -0.5
                 if keys[pygame.K_RIGHT]:
                     control.steer = 0.5
                 if keys[pygame.K_SPACE]:
                     control.brake = 0.75
+                if keys[pygame.K_DOWN]:
+                    control.reverse = True
+                    control.throttle = 0.65
 
                 # Apply vehicle control to the vehicle object
                 vehicle_actor.apply_control(control)
@@ -612,7 +610,7 @@ def main():
                         # print_vehicle_info(vehicle)
                         info_time = world.get_snapshot().timestamp.elapsed_seconds
 
-                clock.tick(30)
+                clock.tick(60)
                 pygame.display.flip()
 
                 

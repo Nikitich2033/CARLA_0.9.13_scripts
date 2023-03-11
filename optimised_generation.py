@@ -184,7 +184,7 @@ intersections = [0,1,2,3,4]
 pedestrians = [True,False]
 pedestrian_cross = [True, False]
 route_length = [100,150,200,250,300,350,400]
-num_scenarios = 30
+num_scenarios = 3
 
 
 scenario_generator = ScenarioGenerator(weather, vehicle, traffic, emergency, timeOfDay, location, intersections, pedestrians, pedestrian_cross,route_length, num_scenarios)
