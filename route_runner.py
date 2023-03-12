@@ -494,7 +494,8 @@ def main():
             t_end = time.time() + 180
             info_time = world.get_snapshot().timestamp.elapsed_seconds
             while time.time() < t_end:
-
+                
+               
                 
                 actor = vehicle_actor
                 actor_location = actor.get_location()
@@ -505,6 +506,8 @@ def main():
                                                                                         y= - 10*math.sin(math.radians(actor_yaw))),
                 
                                                                                          carla.Rotation(pitch= -30 ,yaw=actor_yaw)))
+                
+                
                 world.tick()
 
                 if agent.done():
