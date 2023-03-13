@@ -460,37 +460,6 @@ def main():
                     vehicle.apply_physics_control(vehicle_physics_control)
                     print("Changed grip Thunder")
 
-            def print_vehicle_info(vehicle):
-                    print("Game time: ", world.get_snapshot().timestamp.elapsed_seconds)
-                    print("Vehicle location: ", vehicle.get_location())
-                    print("Vehicle velocity: ", vehicle.get_velocity())
-                    print("Vehicle throttle: ", vehicle.get_control().throttle)
-
-            def save_vehicle_info(vehicle, file_path):
-
-                    # Check if file exists, create it if it doesn't
-                    if not os.path.exists(file_path):
-                        with open(file_path, 'w') as f:
-                            json.dump([], f)
-                    
-                    # Load existing data from file
-                    with open(file_path, 'r') as f:
-                        data = json.load(f)
-                    
-                    # Add new data
-                    new_data = {
-                        'game_time': world.get_snapshot().timestamp.elapsed_seconds,
-                        'vehicle_location': {'x': vehicle.get_location().x, 'y': vehicle.get_location().y, 'z': vehicle.get_location().z},
-                        'vehicle_velocity': {'x': vehicle.get_velocity().x, 'y': vehicle.get_velocity().y, 'z': vehicle.get_velocity().z},
-                        'vehicle_throttle': vehicle.get_control().throttle
-                    }
-                    
-                    data.append(new_data)
-        
-                    # Save data to file
-                    with open(file_path, 'w') as f:
-                        json.dump(data, f,indent=4)
-
 
             pygame.init()
             display = pygame.display.set_mode((1280, 720)) 
@@ -522,19 +491,29 @@ def main():
             # Set up a callback function for when the camera receives an image
             camera.listen(lambda image: display.blit(process_image(image), (0, 0)))
             
-
             sensors = []
 
             collision_bp = world.get_blueprint_library().find('sensor.other.collision')
             collision_transform = carla.Transform(carla.Location(x=1.5, z=2.4))
             collision_sensor = world.spawn_actor(collision_bp, collision_transform, attach_to=vehicle_actor)
 
+            collision_count = {}
+            max_collisions = 1500
+            collided_actors = set()
+
             def on_collision(event):
-                # Do something when a collision occurs
-                print("Collision detected:", event)
+                other_actor = event.other_actor
+                if other_actor not in collided_actors:
+                    collided_actors.add(other_actor)
+                    print(other_actor)
+                    if other_actor.type_id not in collision_count:
+                        collision_count[other_actor.type_id] = 0
+                    collision_count[other_actor.type_id] += 1
+                    print(f"Collision with {other_actor.type_id} - Count: {collision_count[other_actor.type_id]}")
+                    if collision_count[other_actor.type_id] >= max_collisions:
+                        print(f"Max collisions reached with {other_actor.type_id}")
 
             collision_sensor.listen(on_collision)
-
 
             # Get the blueprint for the lane invasion sensor
             lane_invasion_bp = world.get_blueprint_library().find('sensor.other.lane_invasion')
@@ -545,16 +524,54 @@ def main():
             # Spawn the lane invasion sensor actor and attach it to the vehicle
             lane_invasion_sensor = world.spawn_actor(lane_invasion_bp, lane_invasion_transform, attach_to=vehicle_actor)
 
-            # Set up a callback function to handle lane invasion events
+            lane_cross_counter = {}
+
             def on_lane_invasion(event):
-                # Do something when a lane invasion occurs
                 for marking in event.crossed_lane_markings:
-                    print(f"Crossed: {marking.type}")
+                    if marking.type == carla.LaneMarkingType.Solid or marking.type == carla.LaneMarkingType.SolidSolid:
+                        if marking.type not in lane_cross_counter:
+                            lane_cross_counter[marking.type] = 0
+                        lane_cross_counter[marking.type] += 1
+                        print(f"Crossed: {marking.type} - Count: {lane_cross_counter[marking.type]}")
 
             lane_invasion_sensor.listen(on_lane_invasion)
 
             sensors.append(collision_sensor)
             sensors.append(lane_invasion_sensor)
+
+
+            def print_vehicle_info(vehicle):
+                    print("Game time: ", world.get_snapshot().timestamp.elapsed_seconds)
+                    print("Vehicle location: ", vehicle.get_location())
+                    print("Vehicle velocity: ", vehicle.get_velocity())
+                    print("Vehicle throttle: ", vehicle.get_control().throttle)
+
+            def save_vehicle_info(vehicle, file_path, collision_count, lane_cross_counter):
+                # Check if file exists, create it if it doesn't
+                if not os.path.exists(file_path):
+                    with open(file_path, 'w') as f:
+                        json.dump([], f)
+
+                # Load existing data from file
+                with open(file_path, 'r') as f:
+                    data = json.load(f)
+
+                # Add new data
+                new_data = {
+                    'game_time': world.get_snapshot().timestamp.elapsed_seconds,
+                    'vehicle_location': {'x': vehicle.get_location().x, 'y': vehicle.get_location().y, 'z': vehicle.get_location().z},
+                    'vehicle_velocity': {'x': vehicle.get_velocity().x, 'y': vehicle.get_velocity().y, 'z': vehicle.get_velocity().z},
+                    'vehicle_throttle': vehicle.get_control().throttle,
+                    'unique_collisions': len(collision_count),
+                    'solid_lane_crosses': lane_cross_counter.get(carla.LaneMarkingType.Solid, 0),
+                    'double_solid_lane_crosses': lane_cross_counter.get(carla.LaneMarkingType.SolidSolid, 0)
+                }
+
+                data.append(new_data)
+
+                # Save data to file
+                with open(file_path, 'w') as f:
+                    json.dump(data, f, indent=4)
 
             info_time = world.get_snapshot().timestamp.elapsed_seconds
             file_path = f'user_input/manual_scenario_{scenario_num}.json'
@@ -606,7 +623,7 @@ def main():
 
                 if world.get_snapshot().timestamp.elapsed_seconds - info_time >= 1:
                         
-                        save_vehicle_info(vehicle_actor, file_path)
+                        save_vehicle_info(vehicle_actor, file_path,collision_count, lane_cross_counter)
                         # print_vehicle_info(vehicle)
                         info_time = world.get_snapshot().timestamp.elapsed_seconds
 
