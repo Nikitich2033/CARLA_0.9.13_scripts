@@ -28,10 +28,8 @@ class ScenarioGenerator:
         emergency_difficulty = {'Yes': 10, 'No': 0}
         timeOfDay_difficulty = {'Day': 1, 'Night': 5, 'Dawn': 2, 'Dusk': 2}
         location_difficulty = {'Urban': 4, 'Country': 1, 'Downtown': 3}
-        intersections_difficulty = {0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6}
         pedestrians_difficulty = {True: 0.5, False: 0}
         pedestrian_cross_difficulty = {True: 10, False: 0}
-        route_length_difficulty = {50: 0.5, 100: 1.5, 200: 2, 250: 2.5, 300: 3, 400: 4, 500: 5, 600: 6}
 
         generated_scenarios = []
         directory = 'step1'

@@ -12,7 +12,6 @@ import logging
 from carla import VehicleLightState as vls
 
 
-
 def draw_waypoints(waypoints,world, road_id=None, life_time=50.0):
                 spawned = False 
                 for waypoint in waypoints:
@@ -37,7 +36,7 @@ def spawn_random_pedestrians_and_cars(world, route,vehicles_list):
                 car_blueprints = blueprint_library.filter("vehicle.*")
 
                 # Set the number of pedestrians and cars to spawn
-                num_pedestrians = 0
+                num_pedestrians = 15
                 num_cars = 10
 
                 # Spawn pedestrians along the route
@@ -109,23 +108,22 @@ def get_first_last_location(route):
             return first_location, last_location
 
 
- # Open the JSON file
-with open("step1/random_scenarios.json", "r") as file:
-    scenario_data = json.load(file)
-
-directory = 'step2'
-highest_number = 0
-
-for filename in os.listdir(directory):
-    match = re.search(r'auto_scenario_(\d+)', filename)
-    if match:
-        number = int(match.group(1))
-        if number > highest_number:
-            highest_number = number
-
 # Initialize variables with the values from the JSON file
 def main():
-    
+    # Open the JSON file
+    with open("step1/random_scenarios.json", "r") as file:
+        scenario_data = json.load(file)
+
+    directory = 'step2'
+    highest_number = 0
+
+    for filename in os.listdir(directory):
+        match = re.search(r'auto_scenario_(\d+)', filename)
+        if match:
+            number = int(match.group(1))
+            if number > highest_number:
+                highest_number = number
+                
     for scenario_num in range(highest_number,len(scenario_data)):
         try:
            
@@ -208,11 +206,6 @@ def main():
             grp = GlobalRoutePlanner(map,2)
 
             spawn_points = map.get_spawn_points()
-
-            # Set the desired number of junctions
-            num_junctions = intersections
-
-            waypoints = map.generate_waypoints(2.0)
 
             start_location = carla.Location(x=start_x,y=start_y)
             end_location = carla.Location(x=end_x,y=end_y)
@@ -311,15 +304,20 @@ def main():
                 
                     blueprint.set_attribute('role_name', 'autopilot')
 
-                    # prepare the light state of the cars to spawn    
-                    light_state = vls.LowBeam
 
                     # spawn the cars and set their autopilot and light state all together
                     batch.append(SpawnActor(blueprint, transform)
-                        .then(SetAutopilot(FutureActor, True, traffic_manager.get_port()))
-                        .then(SetVehicleLightState(FutureActor, light_state)))
-                        
-                
+                        .then(SetAutopilot(FutureActor, True, traffic_manager.get_port())))
+
+             
+
+                for response in client.apply_batch_sync(batch):
+                    if response.error:
+                        print(f"Error: {response.error}")
+                    else:
+                        vehicles_list.append(world.get_actor(response.actor_id))
+
+              
                 spawn_random_pedestrians_and_cars(world,route,vehicles_list)  
                     
                 for response in client.apply_batch_sync(batch, True):
@@ -366,6 +364,7 @@ def main():
                         print("Walker has no speed")
                         walker_speed.append(0.0)
                     batch.append(SpawnActor(walker_bp, spawn_point))
+
                 results = client.apply_batch_sync(batch, True)
                 walker_speed2 = []
                 for i in range(len(results)):
@@ -404,17 +403,15 @@ def main():
                     all_actors[i].set_max_speed(float(walker_speed[int(i/2)]))
 
                
-            print('spawned %d vehicles and %d walkers, press Ctrl+C to exit.' % (len(vehicles_list), len(walkers_list)))         
+            print('spawned %d vehicles and %d walkers, press Ctrl+C to exit.' % ((len(vehicle_ids))+(len(vehicles_list)), len(walkers_list)))         
 
 
             for vehicle in vehicles_list:
                 
-                print("Length of vehicles_list: ", len(vehicles_list))
-                print("Length of kek: ", len([actor for actor in world.get_actors() if isinstance(actor, carla.Vehicle)]))
                 # prepare the light state to turn on front lights
                 light_state = carla.VehicleLightState.Position | carla.VehicleLightState.LowBeam
                 vehicle.set_light_state(carla.VehicleLightState(light_state))
-                # print(f"Set light state for vehicle {vehicle.id} to {vehicle.get_light_state()}")
+                print(f"Set light state for vehicle {vehicle.id} to {vehicle.get_light_state()}")
 
                 vehicle_physics_control = vehicle.get_physics_control()
 
@@ -429,7 +426,7 @@ def main():
                     vehicle_physics_control.wheels = wheels 
                     vehicle.apply_physics_control(vehicle_physics_control)
 
-                    # print("Lowered the grip on vehicles due to rain")
+                
 
                 if weather == "Thunderstorm":
                     front_left_wheel = carla.WheelPhysicsControl(tire_friction=0.75,max_steer_angle=70)
@@ -439,7 +436,7 @@ def main():
                     wheels = [front_left_wheel, front_right_wheel, rear_left_wheel, rear_right_wheel]
                     vehicle_physics_control.wheels = wheels 
                     vehicle.apply_physics_control(vehicle_physics_control)
-                    # print("Lowered the grip on vehicles due to thunderstorm")
+                   
 
     
             agent = BasicAgent(vehicle_actor)
@@ -488,7 +485,7 @@ def main():
                         if marking.type not in lane_cross_counter:
                             lane_cross_counter[marking.type] = 0
                         lane_cross_counter[marking.type] += 1
-                        # print(f"Crossed: {marking.type} - Count: {lane_cross_counter[marking.type]}")
+                        print(f"Crossed: {marking.type} - Count: {lane_cross_counter[marking.type]}")
 
             lane_invasion_sensor.listen(on_lane_invasion)
 
@@ -500,6 +497,7 @@ def main():
             with open(file_path, 'w') as f:
                         json.dump([], f)
 
+            velocity_check = time.time()
             info_time = world.get_snapshot().timestamp.elapsed_seconds
             while True:
 
@@ -514,12 +512,20 @@ def main():
                                                                                         y= - 10*math.sin(math.radians(actor_yaw))),
                 
                                                                                          carla.Rotation(pitch= -30 ,yaw=actor_yaw)))
-                world.tick()
                 
                 if any(count > max_collisions for count in collision_count.values()):
                     print('Vehicle stuck detected, stopping scenario')
                     break
+                
 
+                velocity = vehicle_actor.get_velocity()
+                if math.sqrt(velocity.x**2 + velocity.y**2 + velocity.z**2) < 0.1:
+                    if time.time() - velocity_check > 50:
+                        print("Vehicle has been stationary for more than 50 seconds")
+                        break
+                    else:
+                        velocity_check = time.time()
+                 
                 if agent.done():
                     break
 
@@ -531,6 +537,7 @@ def main():
 
                 control = agent.run_step()
                 vehicle_actor.apply_control(control)
+                world.tick()
                 
         finally:
 
