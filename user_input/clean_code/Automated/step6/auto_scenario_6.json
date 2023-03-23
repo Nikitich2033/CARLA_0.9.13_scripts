@@ -1,0 +1,1005 @@
+[
+    {
+        "game_time": 7.010604050708935,
+        "vehicle_location": {
+            "x": -143.51829528808594,
+            "y": -89.6256103515625,
+            "z": -0.004482116550207138
+        },
+        "vehicle_velocity": {
+            "x": 0.6142065525054932,
+            "y": -0.4875456392765045,
+            "z": -0.0023135279770940542
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 0,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 8.059106699889526,
+        "vehicle_location": {
+            "x": -142.26918029785156,
+            "y": -90.6592788696289,
+            "z": -0.0047673797234892845
+        },
+        "vehicle_velocity": {
+            "x": 1.155835747718811,
+            "y": -2.463801383972168,
+            "z": 0.0006902694585733116
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 0,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 9.095489481231198,
+        "vehicle_location": {
+            "x": -140.10398864746094,
+            "y": -93.54988861083984,
+            "z": -0.0057390592992305756
+        },
+        "vehicle_velocity": {
+            "x": 3.513124704360962,
+            "y": -2.4590072631835938,
+            "z": -0.001298341667279601
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 2,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 10.135242202086374,
+        "vehicle_location": {
+            "x": -135.70262145996094,
+            "y": -95.80581665039062,
+            "z": -0.0022745514288544655
+        },
+        "vehicle_velocity": {
+            "x": 5.093233108520508,
+            "y": -1.2712078094482422,
+            "z": -0.00015424251614604145
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 4,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 11.137234782567248,
+        "vehicle_location": {
+            "x": -132.23680114746094,
+            "y": -96.61160278320312,
+            "z": -0.015326766297221184
+        },
+        "vehicle_velocity": {
+            "x": 3.9864959716796875,
+            "y": -0.5532422065734863,
+            "z": -1.0857581401069183e-05
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 4,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 12.155655386624858,
+        "vehicle_location": {
+            "x": -128.87254333496094,
+            "y": -97.05007934570312,
+            "z": 0.020311202853918076
+        },
+        "vehicle_velocity": {
+            "x": 1.2629460096359253,
+            "y": -0.12958143651485443,
+            "z": -0.0005821323138661683
+        },
+        "vehicle_throttle": 0.0,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 4,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 13.159155087312683,
+        "vehicle_location": {
+            "x": -128.0382843017578,
+            "y": -97.14098358154297,
+            "z": -0.001885375939309597
+        },
+        "vehicle_velocity": {
+            "x": 0.7149098515510559,
+            "y": -0.0765659436583519,
+            "z": -0.00017553329234942794
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 14.197570108575746,
+        "vehicle_location": {
+            "x": -127.49922943115234,
+            "y": -97.20205688476562,
+            "z": 0.0004616546502802521
+        },
+        "vehicle_velocity": {
+            "x": 0.21543237566947937,
+            "y": -0.02314508706331253,
+            "z": 6.538390880450606e-05
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 15.20500174514018,
+        "vehicle_location": {
+            "x": -127.28392028808594,
+            "y": -97.22559356689453,
+            "z": -0.0009210967691615224
+        },
+        "vehicle_velocity": {
+            "x": 0.2171022593975067,
+            "y": -0.02347872033715248,
+            "z": -6.458282587118447e-05
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 16.253626761725172,
+        "vehicle_location": {
+            "x": -127.15375518798828,
+            "y": -97.23918914794922,
+            "z": -0.0013162994291633368
+        },
+        "vehicle_velocity": {
+            "x": 0.1866759955883026,
+            "y": -0.020482268184423447,
+            "z": 0.0003940582100767642
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 17.27338526933454,
+        "vehicle_location": {
+            "x": -127.01622009277344,
+            "y": -97.25454711914062,
+            "z": -0.003961334004998207
+        },
+        "vehicle_velocity": {
+            "x": 0.0038134742062538862,
+            "y": -0.0009420306887477636,
+            "z": -0.00018046855984721333
+        },
+        "vehicle_throttle": 0.0,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 18.28598040319048,
+        "vehicle_location": {
+            "x": -126.08006286621094,
+            "y": -97.33601379394531,
+            "z": -0.012055816128849983
+        },
+        "vehicle_velocity": {
+            "x": 1.990532636642456,
+            "y": -0.16007661819458008,
+            "z": -0.00019167899154126644
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 19.32919763471,
+        "vehicle_location": {
+            "x": -124.96842193603516,
+            "y": -97.42058563232422,
+            "z": 0.004228744190186262
+        },
+        "vehicle_velocity": {
+            "x": 0.45289888978004456,
+            "y": -0.030737953260540962,
+            "z": 0.00045659541501663625
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 20.364801947725937,
+        "vehicle_location": {
+            "x": -123.3935317993164,
+            "y": -97.53453063964844,
+            "z": -0.012496260926127434
+        },
+        "vehicle_velocity": {
+            "x": 2.6724324226379395,
+            "y": -0.16726720333099365,
+            "z": 0.000448632228653878
+        },
+        "vehicle_throttle": 0.0,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 21.376173863885924,
+        "vehicle_location": {
+            "x": -121.80198669433594,
+            "y": -97.64356994628906,
+            "z": 0.00986961368471384
+        },
+        "vehicle_velocity": {
+            "x": 1.045444369316101,
+            "y": -0.06945547461509705,
+            "z": 0.0008684349013492465
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 22.406327896984294,
+        "vehicle_location": {
+            "x": -121.11339569091797,
+            "y": -97.6871337890625,
+            "z": 0.0011646270286291838
+        },
+        "vehicle_velocity": {
+            "x": 0.5893474221229553,
+            "y": -0.03437402471899986,
+            "z": 0.0002482509589754045
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 23.416874415474012,
+        "vehicle_location": {
+            "x": -120.82381439208984,
+            "y": -97.70510864257812,
+            "z": -0.0014702605549246073
+        },
+        "vehicle_velocity": {
+            "x": 0.052922531962394714,
+            "y": -0.002785957185551524,
+            "z": -0.0007173824124038219
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 24.425943380454555,
+        "vehicle_location": {
+            "x": -120.67510223388672,
+            "y": -97.71451568603516,
+            "z": -0.0012303923722356558
+        },
+        "vehicle_velocity": {
+            "x": 0.06663829833269119,
+            "y": -0.004018159117549658,
+            "z": -0.0007437705644406378
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 25.42825915128924,
+        "vehicle_location": {
+            "x": -120.5738525390625,
+            "y": -97.72066497802734,
+            "z": -0.0013172149192541838
+        },
+        "vehicle_velocity": {
+            "x": 0.06122250109910965,
+            "y": -0.0035767145454883575,
+            "z": -4.68826292490121e-05
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 26.462480003247038,
+        "vehicle_location": {
+            "x": -120.48653411865234,
+            "y": -97.72566986083984,
+            "z": -0.0023050690069794655
+        },
+        "vehicle_velocity": {
+            "x": 0.2986966669559479,
+            "y": -0.01822994276881218,
+            "z": 0.0001672458602115512
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 27.511850639479235,
+        "vehicle_location": {
+            "x": -119.71697998046875,
+            "y": -97.77201843261719,
+            "z": -0.010067901574075222
+        },
+        "vehicle_velocity": {
+            "x": 1.5748214721679688,
+            "y": -0.0949186384677887,
+            "z": -0.0009095191489905119
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 28.52797606657259,
+        "vehicle_location": {
+            "x": -116.95751953125,
+            "y": -97.9299087524414,
+            "z": -0.007251434028148651
+        },
+        "vehicle_velocity": {
+            "x": 3.6820573806762695,
+            "y": -0.203867107629776,
+            "z": -0.0003642558876890689
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 29.560203798813745,
+        "vehicle_location": {
+            "x": -113.0680923461914,
+            "y": -97.95874786376953,
+            "z": -0.0020584105513989925
+        },
+        "vehicle_velocity": {
+            "x": 3.730032205581665,
+            "y": 0.2944086492061615,
+            "z": 0.0006494235713034868
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 30.568423578282818,
+        "vehicle_location": {
+            "x": -109.26072692871094,
+            "y": -97.17035675048828,
+            "z": -0.0006054687546566129
+        },
+        "vehicle_velocity": {
+            "x": 3.6464059352874756,
+            "y": 1.796721339225769,
+            "z": 0.0004293298698030412
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 5,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 31.597771705826744,
+        "vehicle_location": {
+            "x": -105.54953002929688,
+            "y": -94.4997329711914,
+            "z": -0.0012663268717005849
+        },
+        "vehicle_velocity": {
+            "x": 2.8073348999023438,
+            "y": 4.18251371383667,
+            "z": 0.001953558763489127
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 6,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 32.636445705546066,
+        "vehicle_location": {
+            "x": -103.65580749511719,
+            "y": -90.3619155883789,
+            "z": 0.03977992758154869
+        },
+        "vehicle_velocity": {
+            "x": 0.9269691109657288,
+            "y": 3.426732063293457,
+            "z": -0.06726062297821045
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 6,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 33.64012045110576,
+        "vehicle_location": {
+            "x": -102.97017669677734,
+            "y": -87.02982330322266,
+            "z": 0.011950225569307804
+        },
+        "vehicle_velocity": {
+            "x": 0.2254011332988739,
+            "y": 1.889309048652649,
+            "z": -0.0018560600001364946
+        },
+        "vehicle_throttle": 0.0,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 6,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 34.66791683691554,
+        "vehicle_location": {
+            "x": -102.8940200805664,
+            "y": -86.46897888183594,
+            "z": -0.012977218255400658
+        },
+        "vehicle_velocity": {
+            "x": 0.010984860360622406,
+            "y": 0.10680977255105972,
+            "z": -0.00032266616472043097
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 6,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 35.710553663549945,
+        "vehicle_location": {
+            "x": -102.87200927734375,
+            "y": -86.30780792236328,
+            "z": 0.0003079223679378629
+        },
+        "vehicle_velocity": {
+            "x": -0.001250864122994244,
+            "y": -0.005505161359906197,
+            "z": 7.031440327409655e-05
+        },
+        "vehicle_throttle": 0.0,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 6,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 36.81153847719543,
+        "vehicle_location": {
+            "x": -102.87214660644531,
+            "y": -86.30714416503906,
+            "z": -0.0009592437418177724
+        },
+        "vehicle_velocity": {
+            "x": 0.00012528472871053964,
+            "y": 0.0008492079214192927,
+            "z": -0.00032969473977573216
+        },
+        "vehicle_throttle": 0.0,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 6,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 37.81208124640398,
+        "vehicle_location": {
+            "x": -102.85337829589844,
+            "y": -86.17157745361328,
+            "z": -0.007640533149242401
+        },
+        "vehicle_velocity": {
+            "x": 0.0879620909690857,
+            "y": 0.7424867749214172,
+            "z": -2.7060508728027344e-05
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 6,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 38.90289498004131,
+        "vehicle_location": {
+            "x": -102.75379943847656,
+            "y": -85.21334838867188,
+            "z": -0.0004935454926453531
+        },
+        "vehicle_velocity": {
+            "x": 0.06765037029981613,
+            "y": 1.216092586517334,
+            "z": 0.00023767947277519852
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 6,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 40.00065987254493,
+        "vehicle_location": {
+            "x": -102.71764373779297,
+            "y": -84.8026351928711,
+            "z": -0.0003398895205464214
+        },
+        "vehicle_velocity": {
+            "x": 0.03577592223882675,
+            "y": 0.5158867239952087,
+            "z": 0.00011167526099598035
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 6,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 41.10990634071641,
+        "vehicle_location": {
+            "x": -102.64301300048828,
+            "y": -83.95835876464844,
+            "z": 0.01062217727303505
+        },
+        "vehicle_velocity": {
+            "x": 0.04440486803650856,
+            "y": 0.5919129252433777,
+            "z": 0.00016418457380495965
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 6,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 42.11596924508922,
+        "vehicle_location": {
+            "x": -102.55609893798828,
+            "y": -82.27993774414062,
+            "z": -0.012537078931927681
+        },
+        "vehicle_velocity": {
+            "x": -0.05145314708352089,
+            "y": 2.7759294509887695,
+            "z": 0.0005468082381412387
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 7,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 43.25101991253905,
+        "vehicle_location": {
+            "x": -102.45293426513672,
+            "y": -77.94244384765625,
+            "z": -0.007287215907126665
+        },
+        "vehicle_velocity": {
+            "x": 0.10597904771566391,
+            "y": 4.697407245635986,
+            "z": 0.00024830340407788754
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 7,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 44.34245679411106,
+        "vehicle_location": {
+            "x": -102.42208862304688,
+            "y": -72.39342498779297,
+            "z": -0.003633117536082864
+        },
+        "vehicle_velocity": {
+            "x": -0.00512012280523777,
+            "y": 5.591010093688965,
+            "z": -5.888938903808594e-05
+        },
+        "vehicle_throttle": 0.6055951714515686,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 7,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 45.343874987913296,
+        "vehicle_location": {
+            "x": -102.42506408691406,
+            "y": -67.35515594482422,
+            "z": -0.006265029776841402
+        },
+        "vehicle_velocity": {
+            "x": 0.005742254201322794,
+            "y": 5.316873073577881,
+            "z": -0.0003044462064281106
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 7,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 46.39469760726206,
+        "vehicle_location": {
+            "x": -102.44779205322266,
+            "y": -61.64973068237305,
+            "z": 0.0006331634358502924
+        },
+        "vehicle_velocity": {
+            "x": -0.01662301830947399,
+            "y": 5.525755405426025,
+            "z": -2.4700163976376643e-06
+        },
+        "vehicle_throttle": 0.3902703821659088,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 7,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 47.41659195604734,
+        "vehicle_location": {
+            "x": -102.47483825683594,
+            "y": -56.13727569580078,
+            "z": 0.0015355681534856558
+        },
+        "vehicle_velocity": {
+            "x": -0.031187431886792183,
+            "y": 5.063413143157959,
+            "z": 0.00024729728465899825
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 7,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 48.472237451700494,
+        "vehicle_location": {
+            "x": -102.49918365478516,
+            "y": -50.545413970947266,
+            "z": -0.0041212462820112705
+        },
+        "vehicle_velocity": {
+            "x": -0.027401158586144447,
+            "y": 5.362041473388672,
+            "z": 4.8041343688964844e-05
+        },
+        "vehicle_throttle": 0.48897784948349,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 7,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 49.513779408996925,
+        "vehicle_location": {
+            "x": -102.54866790771484,
+            "y": -44.90003967285156,
+            "z": -0.0012866210890933871
+        },
+        "vehicle_velocity": {
+            "x": -0.24858082830905914,
+            "y": 5.445910453796387,
+            "z": -8.014679042389616e-05
+        },
+        "vehicle_throttle": 0.51479172706604,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 7,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 50.568620706675574,
+        "vehicle_location": {
+            "x": -104.1655044555664,
+            "y": -39.76290512084961,
+            "z": 0.005656890571117401
+        },
+        "vehicle_velocity": {
+            "x": -4.391678810119629,
+            "y": 3.2152798175811768,
+            "z": 0.005485634785145521
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 7,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 51.673886825097725,
+        "vehicle_location": {
+            "x": -109.49826049804688,
+            "y": -37.646549224853516,
+            "z": 0.0011020660167559981
+        },
+        "vehicle_velocity": {
+            "x": -5.49904727935791,
+            "y": 0.41545370221138,
+            "z": 0.004113631322979927
+        },
+        "vehicle_throttle": 0.3825870752334595,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 52.719361088005826,
+        "vehicle_location": {
+            "x": -115.04861450195312,
+            "y": -36.89291763305664,
+            "z": -0.002277984516695142
+        },
+        "vehicle_velocity": {
+            "x": -4.486517429351807,
+            "y": -0.09411893039941788,
+            "z": 0.0017007255228236318
+        },
+        "vehicle_throttle": 0.0,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 53.76057331706397,
+        "vehicle_location": {
+            "x": -119.04215240478516,
+            "y": -36.63505935668945,
+            "z": -0.013909301720559597
+        },
+        "vehicle_velocity": {
+            "x": -4.447854042053223,
+            "y": 0.03331397846341133,
+            "z": 0.005440387409180403
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 54.80895067448728,
+        "vehicle_location": {
+            "x": -123.3426742553711,
+            "y": -36.49223327636719,
+            "z": 0.01845443621277809
+        },
+        "vehicle_velocity": {
+            "x": -3.3579494953155518,
+            "y": 0.09578132629394531,
+            "z": 0.004104738123714924
+        },
+        "vehicle_throttle": 0.0,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 55.822153695626184,
+        "vehicle_location": {
+            "x": -124.72509765625,
+            "y": -36.46171188354492,
+            "z": 0.0047831726260483265
+        },
+        "vehicle_velocity": {
+            "x": -1.0286147594451904,
+            "y": 0.015280907973647118,
+            "z": 0.003951511345803738
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 56.90259713935666,
+        "vehicle_location": {
+            "x": -125.20254516601562,
+            "y": -36.45290756225586,
+            "z": 0.014711913652718067
+        },
+        "vehicle_velocity": {
+            "x": -0.3245791494846344,
+            "y": 0.005622529424726963,
+            "z": 0.0010784434853121638
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 57.92224779794924,
+        "vehicle_location": {
+            "x": -125.51570892333984,
+            "y": -36.4479866027832,
+            "z": 0.009407500736415386
+        },
+        "vehicle_velocity": {
+            "x": -0.05489230528473854,
+            "y": 0.0008884315611794591,
+            "z": -0.00015350340981967747
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 58.94021023134701,
+        "vehicle_location": {
+            "x": -125.66378784179688,
+            "y": -36.44572067260742,
+            "z": 0.009418182075023651
+        },
+        "vehicle_velocity": {
+            "x": -0.034790921956300735,
+            "y": 0.00030262809013947845,
+            "z": 0.0003518390585668385
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 59.95487104984932,
+        "vehicle_location": {
+            "x": -125.81558227539062,
+            "y": -36.44401931762695,
+            "z": 0.010065841488540173
+        },
+        "vehicle_velocity": {
+            "x": -0.039752837270498276,
+            "y": -9.830139788391534e-06,
+            "z": 3.1213759939419106e-05
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 61.02669103140943,
+        "vehicle_location": {
+            "x": -126.81829833984375,
+            "y": -36.4350471496582,
+            "z": 0.001957549946382642
+        },
+        "vehicle_velocity": {
+            "x": -2.0745553970336914,
+            "y": 0.0113475127145648,
+            "z": 0.008547277189791203
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 62.02815681765787,
+        "vehicle_location": {
+            "x": -129.9435577392578,
+            "y": -36.43181228637695,
+            "z": 0.020698852837085724
+        },
+        "vehicle_velocity": {
+            "x": -4.014033317565918,
+            "y": -0.006123233120888472,
+            "z": 0.016734551638364792
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 63.111653816653416,
+        "vehicle_location": {
+            "x": -135.0603485107422,
+            "y": -36.451725006103516,
+            "z": 0.053398437798023224
+        },
+        "vehicle_velocity": {
+            "x": -5.0851149559021,
+            "y": -0.023607904091477394,
+            "z": 0.03493299335241318
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 64.13210852979682,
+        "vehicle_location": {
+            "x": -140.2043914794922,
+            "y": -36.48386764526367,
+            "z": 0.10357055068016052
+        },
+        "vehicle_velocity": {
+            "x": -4.76303768157959,
+            "y": -0.03140635788440704,
+            "z": 0.04569842666387558
+        },
+        "vehicle_throttle": 0.75,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 65.18194490834139,
+        "vehicle_location": {
+            "x": -145.691162109375,
+            "y": -36.52295684814453,
+            "z": 0.158283993601799
+        },
+        "vehicle_velocity": {
+            "x": -5.493472576141357,
+            "y": -0.03474913164973259,
+            "z": 0.12225862592458725
+        },
+        "vehicle_throttle": 0.13364367187023163,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 66.22285621031187,
+        "vehicle_location": {
+            "x": -151.3367462158203,
+            "y": -36.564735412597656,
+            "z": 0.2154611200094223
+        },
+        "vehicle_velocity": {
+            "x": -5.440949440002441,
+            "y": -0.053740762174129486,
+            "z": 0.05280982702970505
+        },
+        "vehicle_throttle": 0.4360909163951874,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    },
+    {
+        "game_time": 67.25977941020392,
+        "vehicle_location": {
+            "x": -156.97659301757812,
+            "y": -36.608680725097656,
+            "z": 0.22890815138816833
+        },
+        "vehicle_velocity": {
+            "x": -5.443324089050293,
+            "y": -0.03886380419135094,
+            "z": -0.001823320402763784
+        },
+        "vehicle_throttle": 0.45482337474823,
+        "unique_collisions": 0,
+        "solid_lane_crosses": 8,
+        "double_solid_lane_crosses": 0
+    }
+]
