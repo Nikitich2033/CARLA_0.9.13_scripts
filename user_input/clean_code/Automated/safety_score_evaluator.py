@@ -4,6 +4,7 @@ from dtw import *
 import math
 import json
 import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
 import os
 
@@ -99,6 +100,25 @@ def generate_graph(perfect_trajectory_array, ideal_trajectory_length, driven_pat
     # Close the plot
     plt.close()
 
+def generate_score_distribution_graph(rated_scenario_data):
+    # Extract calculated scores
+    calculated_scores = [scenario["calculated_score"] for scenario in rated_scenario_data]
+
+    # Create a bell curve distribution graph
+    sns.set(style="whitegrid")
+    sns.histplot(calculated_scores, kde=True, bins=20)
+
+    plt.title("Distribution of Calculated Scores")
+    plt.xlabel("Calculated Score")
+    plt.ylabel("Frequency")
+
+    # Save the figure as an image
+    plt.savefig(f'step3/calculated_safety_score_dist.png', dpi=300)
+
+    # Close the plot
+    plt.close()
+
+
 
 def rate_driven_path(trajectory, ideal_trajectory_length, driven_path, driven_path_length,
                          avg_velocity, avg_acceleration, num_collisions, solid_lane_crosses, double_solid_lane_crosses):
@@ -131,7 +151,6 @@ def rate_driven_path(trajectory, ideal_trajectory_length, driven_path, driven_pa
                 # Normalize safety_score to range 0-100
                 
                 safety_score_normalized = max(0, min(((safety_score / (max_score)) * 100), 100))
-
                 return safety_score_normalized,distance
 
 
@@ -226,3 +245,8 @@ for root, dirs, files in os.walk('step2'):
 # Open the file for writing
 with open('step3/rated_scenarios.json', 'w') as f:
     json.dump(rated_objects, f,indent=4)
+
+with open("step3/rated_scenarios.json", "r") as file:
+        rated_scenario_data = json.load(file)
+
+generate_score_distribution_graph(rated_scenario_data)
