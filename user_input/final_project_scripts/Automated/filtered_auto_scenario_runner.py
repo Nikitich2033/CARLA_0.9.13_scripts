@@ -9,7 +9,6 @@ import math
 from agents.navigation.basic_agent import BasicAgent
 from carla import WeatherParameters
 import logging
-from carla import VehicleLightState as vls
 
 
 def draw_waypoints(waypoints,world, road_id=None, life_time=50.0):
@@ -260,7 +259,6 @@ def main():
                 
                 SpawnActor = carla.command.SpawnActor
                 SetAutopilot = carla.command.SetAutopilot
-                SetVehicleLightState = carla.command.SetVehicleLightState
                 FutureActor = carla.command.FutureActor
 
                 blueprints = world.get_blueprint_library().filter('vehicle.*')
@@ -377,9 +375,11 @@ def main():
                     all_id.append(walkers_list[i]["id"])
                 all_actors = world.get_actors(all_id)
 
-                # 5. initialize each controller and set target to walk to (list is [controler, actor, controller, actor ...])
+    
                 # set how many pedestrians can cross the road
-                world.set_pedestrians_cross_factor(percentagePedestriansCrossing)
+                if pedestrian_cross == True:
+                    world.set_pedestrians_cross_factor(percentagePedestriansCrossing)
+                
                 for i in range(0, len(all_id), 2):
                     # start walker
                     all_actors[i].start()
@@ -397,7 +397,7 @@ def main():
                 # prepare the light state to turn on front lights
                 light_state = carla.VehicleLightState.Position | carla.VehicleLightState.LowBeam
                 vehicle.set_light_state(carla.VehicleLightState(light_state))
-                # print(f"Set light state for vehicle {vehicle.id} to {vehicle.get_light_state()}")
+        
 
                 vehicle_physics_control = vehicle.get_physics_control()
 
@@ -532,7 +532,7 @@ def main():
             client.apply_batch([carla.command.DestroyActor(x) for x in vehicle_ids])
             client.apply_batch([carla.command.DestroyActor(x) for x in vehicles_list])
             
-            # stop walker controllers (list is [controller, actor, controller, actor ...])
+            # stop all actors
             for i in range(0, len(all_id), 2):
                 all_actors[i].stop()
 
