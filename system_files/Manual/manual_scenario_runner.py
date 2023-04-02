@@ -359,14 +359,7 @@ def main():
               
                 spawn_cars_along_route(world,route,vehicles_list)  
                     
-                for response in client.apply_batch_sync(batch, True):
-                    if response.error:
-                        logging.error(response.error)
-                    else:
-                        vehicle_ids.append(response.actor_id)
-                        vehicles_list.append(world.get_actor(response.actor_id))
-     
-
+            
             if pedestrians == True:
                 if emergency == "No":
                     percentagePedestriansRunning = 20     # how many pedestrians will run
