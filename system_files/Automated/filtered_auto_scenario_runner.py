@@ -315,14 +315,6 @@ def main():
                 # Spawn additional cars along the route if needed
                 spawn_cars_along_route(world,route,vehicles_list)
                     
-                # for response in client.apply_batch_sync(batch, True):
-                #     if response.error:
-                #         logging.error(response.error)
-                #     else:
-                #         vehicle_ids.append(response.actor_id)
-                #         vehicles_list.append(world.get_actor(response.actor_id))
-     
-
             if pedestrians:
                 # Set the percentage of pedestrians running and crossing based on the emergency parameter
                 if emergency == "No":
@@ -502,10 +494,12 @@ def main():
                 actor_location = actor.get_location()
                 actor_transform = actor.get_transform()
                 actor_yaw = actor_transform.rotation.yaw
-                spectator.set_transform(carla.Transform(actor_location + carla.Location(z=10,
-                                                                                        x=-10 * math.cos(math.radians(actor_yaw)),
-                                                                                        y=-10 * math.sin(math.radians(actor_yaw))),
-                                                        carla.Rotation(pitch=-30, yaw=actor_yaw)))
+                spectator.set_transform(carla.Transform(actor_location 
+                                                        + carla.Location(
+                                                            z=10,
+                                                            x=-10 * math.cos(math.radians(actor_yaw)),
+                                                            y=-10 * math.sin(math.radians(actor_yaw))),
+                                                            carla.Rotation(pitch=-30, yaw=actor_yaw)))
 
                 # Check if the vehicle has reached the maximum allowed number of collisions
                 if any(count > max_collisions for count in collision_count.values()):
@@ -518,8 +512,8 @@ def main():
                     if time.time() - velocity_check > 50:
                         print("Vehicle has been stationary for more than 50 seconds")
                         break
-                    else:
-                        velocity_check = time.time()
+                else:
+                    velocity_check = time.time()
 
                 # Check if the agent has completed the route
                 if agent.done():
