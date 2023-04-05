@@ -161,7 +161,7 @@ def main():
 
     # Find the highest numbered auto_scenario file
     for filename in os.listdir(directory):
-        match = re.search(r'auto_scenario_(\d+)', filename)
+        match = re.search(r'manual_scenario_(\d+)', filename)
         if match:
             number = int(match.group(1))
             if number > highest_number:
@@ -639,10 +639,10 @@ def main():
             client.apply_batch([carla.command.DestroyActor(x) for x in vehicle_ids])
             client.apply_batch([carla.command.DestroyActor(x) for x in vehicles_list])
             
-            # Destroy the sensors
-            for i in range(len(sensors)-1):
+             # Destroy the sensors
+            for i in range(len(sensors) - 1):
                 sensors[i].destroy()
-                
+
             # Stop all actors
             for i in range(0, len(all_id), 2):
                 all_actors[i].stop()
